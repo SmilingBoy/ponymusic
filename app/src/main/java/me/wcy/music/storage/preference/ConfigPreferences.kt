@@ -44,5 +44,5 @@ object ConfigPreferences :
 
     var currentSongId: String by IPreferencesFile.StringProperty("current_song_id", "")
 
-    var apiDomain: String by IPreferencesFile.StringProperty("api_domain", "")
+    var apiDomain: String by IPreferencesFile.StringProperty("api_domain", "http://127.0.0.1:9003/")
 }

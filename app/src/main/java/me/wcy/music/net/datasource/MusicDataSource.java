@@ -39,8 +39,6 @@ import androidx.media3.datasource.RawResourceDataSource;
 import androidx.media3.datasource.TransferListener;
 import androidx.media3.datasource.UdpDataSource;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -128,7 +126,7 @@ public final class MusicDataSource implements DataSource {
          * @param transferListener The listener that will be used.
          * @return This factory.
          */
-        @CanIgnoreReturnValue
+
         @UnstableApi
         public Factory setTransferListener(@Nullable TransferListener transferListener) {
             this.transferListener = transferListener;
