@@ -6,7 +6,9 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.blankj.utilcode.util.LogUtils
 import me.wcy.music.common.bean.SongData
+import me.wcy.music.discover.playlist.detail.bean.NmAlbumData
 import me.wcy.music.discover.playlist.detail.bean.NmSongData
+import me.wcy.music.storage.db.entity.OnlineIdType
 import me.wcy.music.storage.db.entity.SongEntity
 import me.wcy.music.utils.MusicUtils.asLargeCover
 import me.wcy.music.utils.MusicUtils.asSmallCover
@@ -91,6 +93,33 @@ fun NmSongData.toNmMediaItem(): MediaItem {
                 .build()
         )
         .build()
+}
+
+fun NmAlbumData.albumToMediaItem(): MediaItem {
+
+    val uri = Uri.Builder()
+        .scheme(SCHEME_NETEASE)
+        .authority(CommonApp.app.packageName)
+        .appendQueryParameter(PARAM_ID, id.toString())
+        .appendQueryParameter("type", OnlineIdType.ALBUM.toString())
+        .build()
+
+    return MediaItem.Builder()
+        .setMediaId("${SongEntity.ONLINE}#$id")
+        .setUri(uri)
+        .setMediaMetadata(
+            MediaMetadata.Builder()
+                .setTitle(name)
+                .setArtist(artist)
+                .setAlbumTitle("")
+                .setAlbumArtist(albumArtist)
+//                .setArtworkUri(Uri.parse(al.getLargeCover()))
+//                .setBaseCover(al.picUrl)
+                .setDuration((duration * 1000L).toLong())
+                .build()
+        )
+        .build()
+
 }
 
 fun SongData.toMediaItem(): MediaItem {

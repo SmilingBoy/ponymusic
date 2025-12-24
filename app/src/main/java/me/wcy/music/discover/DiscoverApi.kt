@@ -6,6 +6,7 @@ import me.wcy.music.common.bean.LrcDataWrap
 import me.wcy.music.common.bean.SongData
 import me.wcy.music.common.bean.SongUrlData
 import me.wcy.music.discover.banner.BannerListData
+import me.wcy.music.discover.playlist.detail.bean.NmAlbumData
 import me.wcy.music.discover.playlist.detail.bean.NmSongData
 import me.wcy.music.discover.playlist.detail.bean.PlaylistDetailData
 import me.wcy.music.discover.playlist.detail.bean.SongListData
@@ -103,6 +104,30 @@ interface DiscoverApi {
         @Path("id") id: String
     ): NmSongData
 
+    /**
+     * 专辑歌曲详情
+     * http://127.0.0.1:9003/api/song?_end=-1&_order=ASC&_sort=trackNumber&_start=0&album_id=885b3c2609933c220a8ce87d95d89c63
+     */
+    @GET("api/song")
+    suspend fun getAlbumSongDetail(
+        @Query("_end") end: Int = -1,
+        @Query("_order") order: String = "ASC",
+        @Query("_sort") sort: String = "trackNumber",
+        @Query("_start") start: Int = 0,
+        @Query("album_id") albumId: String = "",
+    ): List<NmSongData>
+
+    /**
+     * 歌曲列表
+     */
+    @GET("api/album")
+    suspend fun getSongList(
+        @Query("_end") end: Int = 20,
+        @Query("_order") order: String = "ASC",
+        @Query("_sort") sort: String = "random",
+        @Query("_start") start: Int = 0,
+        @Query("seed") seed: String = "",
+    ): List<NmAlbumData>
 
     companion object {
         private const val SONG_LIST_LIMIT = 800

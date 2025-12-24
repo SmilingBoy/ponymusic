@@ -7,24 +7,19 @@ import kotlinx.coroutines.launch
 import me.wcy.music.R
 import me.wcy.music.common.BaseMusicFragment
 import me.wcy.music.common.OnItemClickListener2
-import me.wcy.music.common.bean.SongData
-import me.wcy.music.common.dialog.songmenu.SongMoreMenuDialog
-import me.wcy.music.common.dialog.songmenu.items.AlbumMenuItem
-import me.wcy.music.common.dialog.songmenu.items.ArtistMenuItem
-import me.wcy.music.common.dialog.songmenu.items.CollectMenuItem
-import me.wcy.music.common.dialog.songmenu.items.CommentMenuItem
 import me.wcy.music.consts.RoutePath
 import me.wcy.music.databinding.FragmentRecommendSongBinding
 import me.wcy.music.discover.DiscoverApi
+import me.wcy.music.discover.playlist.detail.bean.NmAlbumData
 import me.wcy.music.discover.recommend.song.item.RecommendSongItemBinder
 import me.wcy.music.service.PlayerController
-import me.wcy.music.utils.toMediaItem
+import me.wcy.music.utils.albumToMediaItem
+import me.wcy.music.utils.toNmMediaItem
 import me.wcy.radapter3.RAdapter
 import me.wcy.router.CRouter
 import me.wcy.router.annotation.Route
 import top.wangchenyan.common.ext.getColor
 import top.wangchenyan.common.ext.viewBindings
-import top.wangchenyan.common.net.apiCall
 import javax.inject.Inject
 
 /**
@@ -35,7 +30,7 @@ import javax.inject.Inject
 class RecommendSongFragment : BaseMusicFragment() {
     private val viewBinding by viewBindings<FragmentRecommendSongBinding>()
     private val adapter by lazy {
-        RAdapter<SongData>()
+        RAdapter<NmAlbumData>()
     }
 
     @Inject
@@ -65,29 +60,33 @@ class RecommendSongFragment : BaseMusicFragment() {
             navBarColor = getColor(R.color.play_bar_bg)
         }
 
-        adapter.register(RecommendSongItemBinder(object : OnItemClickListener2<SongData> {
-            override fun onItemClick(item: SongData, position: Int) {
-                val entityList = adapter.getDataList().map { it.toMediaItem() }
+        adapter.register(RecommendSongItemBinder(object : OnItemClickListener2<NmAlbumData> {
+            override fun onItemClick(item: NmAlbumData, position: Int) {
+                val entityList = adapter.getDataList().map {
+                    it.albumToMediaItem()
+                }
                 playerController.replaceAll(entityList, entityList[position])
                 CRouter.with(requireContext()).url(RoutePath.PLAYING).start()
             }
 
-            override fun onMoreClick(item: SongData, position: Int) {
-                SongMoreMenuDialog(requireActivity(), item)
-                    .setItems(
-                        listOf(
-                            CollectMenuItem(lifecycleScope, item),
-                            CommentMenuItem(item),
-                            ArtistMenuItem(item),
-                            AlbumMenuItem(item)
-                        )
-                    )
-                    .show()
+            override fun onMoreClick(item: NmAlbumData, position: Int) {
+//                SongMoreMenuDialog(requireActivity(), item)
+//                    .setItems(
+//                        listOf(
+//                            CollectMenuItem(lifecycleScope, item),
+//                            CommentMenuItem(item),
+//                            ArtistMenuItem(item),
+//                            AlbumMenuItem(item)
+//                        )
+//                    )
+//                    .show()
             }
         }))
         viewBinding.recyclerView.adapter = adapter
         viewBinding.tvPlayAll.setOnClickListener {
-            val entityList = adapter.getDataList().map { it.toMediaItem() }
+            val entityList = adapter.getDataList().map {
+                it.albumToMediaItem()
+            }
             playerController.replaceAll(entityList, entityList.first())
             CRouter.with(requireContext()).url(RoutePath.PLAYING).start()
         }
@@ -98,12 +97,14 @@ class RecommendSongFragment : BaseMusicFragment() {
     private fun loadData() {
         lifecycleScope.launch {
             showLoadSirLoading()
-            val res = apiCall { DiscoverApi.get().getRecommendSongs() }
-            if (res.isSuccessWithData()) {
+            val res = kotlin.runCatching {
+                DiscoverApi.get().getSongList(seed = System.currentTimeMillis().toString())
+            }
+            if (res.isSuccess) {
                 showLoadSirSuccess()
-                adapter.refresh(res.getDataOrThrow().dailySongs)
+                adapter.refresh(res.getOrThrow())
             } else {
-                showLoadSirError(res.msg)
+                showLoadSirError()
             }
         }
     }

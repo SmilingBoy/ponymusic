@@ -15,6 +15,12 @@ import me.wcy.music.R
 import me.wcy.music.account.service.UserService
 import me.wcy.music.common.BaseMusicFragment
 import me.wcy.music.common.OnItemClickListener2
+import me.wcy.music.common.dialog.songmenu.SongMoreMenuDialog
+import me.wcy.music.common.dialog.songmenu.items.AlbumMenuItem
+import me.wcy.music.common.dialog.songmenu.items.ArtistMenuItem
+import me.wcy.music.common.dialog.songmenu.items.CollectMenuItem
+import me.wcy.music.common.dialog.songmenu.items.CommentMenuItem
+import me.wcy.music.common.dialog.songmenu.items.DeletePlaylistSongMenuItem
 import me.wcy.music.consts.RoutePath
 import me.wcy.music.databinding.FragmentPlaylistDetailBinding
 import me.wcy.music.databinding.ItemPlaylistTagBinding
