@@ -129,6 +129,25 @@ interface DiscoverApi {
         @Query("seed") seed: String = "",
     ): List<NmAlbumData>
 
+    /**
+     * http://127.0.0.1:9003/rest/scrobble?u=admin&t=ff862c44347581944309e24c011c835c&s=b56c9f&f=json&v=1.8.0&c=NavidromeUI&id=d55b3bc6b9c04221681f1ed5ce38e36e&submission=false
+     * http://127.0.0.1:9003/rest/scrobble?u=admin&t=ff862c44347581944309e24c011c835c&s=b56c9f&f=json&v=1.8.0&c=NavidromeUI&id=acb4cd8dfd26fb817e1eb22ae48ee761&time=1766560589952&submission=true
+     *
+     * 提交歌曲播放
+     */
+    @GET("rest/scrobble")
+    suspend fun scrobble(
+        @Query("f") format: String = "json",
+        @Query("v") version: String = "1.8.0",
+        @Query("c") client: String = "NavidromeUI",
+        @Query("u") username: String,
+        @Query("s") salt: String,
+        @Query("t") saltToken: String,
+        @Query("id") id: String,
+        @Query("submission") submission: Boolean,
+        @Query("time") time: Long? = null
+    ): Any
+
     companion object {
         private const val SONG_LIST_LIMIT = 800
 

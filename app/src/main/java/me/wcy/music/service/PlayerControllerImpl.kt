@@ -7,8 +7,10 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
+import com.blankj.utilcode.util.LogUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,8 +19,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.wcy.music.account.AccountPreference
+import me.wcy.music.discover.DiscoverApi
 import me.wcy.music.storage.db.MusicDatabase
 import me.wcy.music.storage.preference.ConfigPreferences
+import me.wcy.music.utils.getNmSongId
 import me.wcy.music.utils.toMediaItem
 import me.wcy.music.utils.toSongEntity
 import top.wangchenyan.common.ext.toUnMutable
@@ -74,6 +79,8 @@ class PlayerControllerImpl(
                     Player.STATE_READY -> {
                         player.play()
                         _playState.value = PlayState.Playing
+                        scrobble(false)
+                        scrobble(true)
                     }
 
                     Player.STATE_ENDED -> {
@@ -148,6 +155,34 @@ class PlayerControllerImpl(
             }
         }
     }
+
+
+    private fun scrobble(submission: Boolean) {
+
+        LogUtils.d("scrobble: $submission")
+
+        val songId = _currentSong.value?.getNmSongId() ?: return
+
+        val time = if (submission) {
+            System.currentTimeMillis()
+        } else {
+            null
+        }
+
+        AccountPreference.navidromeLogin?.let {
+            GlobalScope.launch(Dispatchers.IO) {
+                DiscoverApi.get().scrobble(
+                    username = it.username,
+                    salt = it.subsonicSalt,
+                    saltToken = it.subsonicToken,
+                    id = songId,
+                    submission = submission,
+                    time = time
+                )
+            }
+        }
+    }
+
 
     @MainThread
     override fun addAndPlay(song: MediaItem) {

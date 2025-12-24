@@ -6,6 +6,7 @@ import me.wcy.music.common.bean.PlaylistData
 import me.wcy.music.databinding.ItemUserPlaylistBinding
 import me.wcy.music.mine.bean.NmPlaylistBean
 import me.wcy.music.utils.ImageUtils.loadCover
+import me.wcy.music.utils.NavidromeUtil
 import me.wcy.radapter3.RItemBinder
 
 /**
@@ -20,6 +21,8 @@ class NmUserPlaylistItemBinder(
         viewBinding.root.setOnClickListener {
             listener.onItemClick(item)
         }
+        viewBinding.ivCover.loadCover(NavidromeUtil.getCover(item.id), SizeUtils.dp2px(4f))
+
 //        viewBinding.ivCover.loadCover(item.getSmallCover(), SizeUtils.dp2px(4f))
         viewBinding.tvName.text = item.name
         viewBinding.tvCount.text = if (isMine) {

@@ -165,6 +165,10 @@ fun MediaItem.getSongId(): Long {
     return mediaId.split("#").getOrNull(1)?.toLongOrNull() ?: 0L
 }
 
+fun MediaItem.getNmSongId(): String {
+    return mediaId.split("#").lastOrNull() ?: ""
+}
+
 fun MediaMetadata.Builder.setDuration(duration: Long) = apply {
     val extras = build().extras ?: bundleOf()
     extras.putLong(EXTRA_DURATION, duration)
