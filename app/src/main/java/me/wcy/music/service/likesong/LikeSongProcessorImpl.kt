@@ -36,14 +36,15 @@ class LikeSongProcessorImpl @Inject constructor(
     override fun updateLikeSongList() {
         if (userService.isLogin().not()) return
         launch {
-            val res = runCatching {
-                MineApi.get().getMyLikeSongList(userService.getUserId())
-            }
-            val data = res.getOrNull()
-            if (data?.code == 200) {
-                likeSongSet.clear()
-                likeSongSet.addAll(data.ids)
-            }
+            //todo 兼容注释
+//            val res = runCatching {
+//                MineApi.get().getMyLikeSongList(userService.getUserId())
+//            }
+//            val data = res.getOrNull()
+//            if (data?.code == 200) {
+//                likeSongSet.clear()
+//                likeSongSet.addAll(data.ids)
+//            }
         }
     }
 

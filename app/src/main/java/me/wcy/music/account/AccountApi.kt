@@ -6,13 +6,18 @@ import top.wangchenyan.common.utils.GsonUtils
 import top.wangchenyan.common.utils.ServerTime
 import me.wcy.music.account.bean.LoginResultData
 import me.wcy.music.account.bean.LoginStatusData
+import me.wcy.music.account.bean.navidrome.PasswordLoginRequest
 import me.wcy.music.account.bean.QrCodeData
 import me.wcy.music.account.bean.QrCodeKeyData
 import me.wcy.music.account.bean.SendCodeResult
+import me.wcy.music.account.bean.navidrome.LoginResultBean
+import me.wcy.music.account.bean.navidrome.UserProfileBean
 import me.wcy.music.net.HttpClient
 import me.wcy.music.storage.preference.ConfigPreferences
 import retrofit2.Retrofit
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -56,6 +61,21 @@ interface AccountApi {
     suspend fun getLoginStatus(
         @Query("timestamp") timestamp: Long = ServerTime.currentTimeMillis()
     ): LoginStatusData
+
+
+    /**
+     * ================================Navidrome=================================
+     */
+
+    @POST("auth/login")
+    suspend fun passwordLogin(
+        @Body request: PasswordLoginRequest
+    ): LoginResultBean
+
+
+    @GET("api/user")
+    suspend fun userProfile(): List<UserProfileBean>
+
 
     companion object {
         private val api: AccountApi by lazy {

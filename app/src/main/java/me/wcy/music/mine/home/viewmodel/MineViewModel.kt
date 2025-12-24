@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import me.wcy.music.account.service.UserService
 import me.wcy.music.common.bean.PlaylistData
 import me.wcy.music.mine.MineApi
+import me.wcy.music.mine.bean.NmPlaylistBean
 import me.wcy.music.net.NetCache
 import top.wangchenyan.common.ext.toUnMutable
 import top.wangchenyan.common.model.CommonResult
@@ -23,7 +24,7 @@ import javax.inject.Inject
 class MineViewModel @Inject constructor() : ViewModel() {
     private val _likePlaylist = MutableStateFlow<PlaylistData?>(null)
     val likePlaylist = _likePlaylist.toUnMutable()
-    private val _myPlaylists = MutableStateFlow<List<PlaylistData>>(emptyList())
+    private val _myPlaylists = MutableStateFlow<List<NmPlaylistBean>>(emptyList())
     val myPlaylists = _myPlaylists
     private val _collectPlaylists = MutableStateFlow<List<PlaylistData>>(emptyList())
     val collectPlaylists = _collectPlaylists
@@ -35,9 +36,9 @@ class MineViewModel @Inject constructor() : ViewModel() {
 
     init {
         viewModelScope.launch {
-            userService.profile.collectLatest { profile ->
+            userService.navidromeProfile.collectLatest { profile ->
                 if (profile != null) {
-                    updatePlaylist(profile.userId)
+                    updatePlaylist(1)
                 } else {
                     _likePlaylist.value = null
                     _myPlaylists.value = emptyList()
@@ -51,7 +52,7 @@ class MineViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             if (userService.isLogin()) {
                 val uid = userService.profile.value?.userId ?: return@launch
-                val cacheList = NetCache.userCache.getJsonArray(CACHE_KEY, PlaylistData::class.java)
+                val cacheList = NetCache.userCache.getJsonArray(CACHE_KEY, NmPlaylistBean::class.java)
                     ?: return@launch
                 notifyPlaylist(uid, cacheList)
             }
@@ -60,8 +61,7 @@ class MineViewModel @Inject constructor() : ViewModel() {
 
     fun updatePlaylist() {
         if (userService.isLogin()) {
-            val uid = userService.profile.value?.userId ?: return
-            updatePlaylist(uid)
+            updatePlaylist(1)
         }
     }
 
@@ -69,21 +69,19 @@ class MineViewModel @Inject constructor() : ViewModel() {
         updateJob?.cancel()
         updateJob = viewModelScope.launch {
             val res = kotlin.runCatching {
-                MineApi.get().getUserPlaylist(uid)
+                MineApi.get().getPlaylist()
             }
-            if (res.getOrNull()?.code == 200) {
-                val list = res.getOrThrow().playlists
-                notifyPlaylist(uid, list)
-                NetCache.userCache.putJson(CACHE_KEY, list)
-            }
+            val list = res.getOrThrow()
+            notifyPlaylist(uid, list)
+            NetCache.userCache.putJson(CACHE_KEY, list)
         }
     }
 
-    private fun notifyPlaylist(uid: Long, list: List<PlaylistData>) {
-        val mineList = list.filter { it.userId == uid }
-        _likePlaylist.value = mineList.firstOrNull()
-        _myPlaylists.value = mineList.takeLast((mineList.size - 1).coerceAtLeast(0))
-        _collectPlaylists.value = list.filter { it.userId != uid }
+    private fun notifyPlaylist(uid: Long, list: List<NmPlaylistBean>) {
+//        val mineList = list.filter { it.userId == uid }
+//        _likePlaylist.value = mineList.firstOrNull()
+        _myPlaylists.value = list
+//        _collectPlaylists.value = list.filter { it.userId != uid }
     }
 
     suspend fun removeCollect(id: Long): CommonResult<Unit> {
@@ -91,7 +89,7 @@ class MineViewModel @Inject constructor() : ViewModel() {
         return if (res.isSuccess()) {
             val list = _collectPlaylists.value
             _collectPlaylists.value = list.toMutableList().apply {
-                removeAll { it.id == id }
+//                removeAll { it.id == id }
             }
             CommonResult.success(Unit)
         } else {
@@ -100,6 +98,6 @@ class MineViewModel @Inject constructor() : ViewModel() {
     }
 
     companion object {
-        private const val CACHE_KEY = "my_playlist"
+        private const val CACHE_KEY = "nm_my_playlist"
     }
 }

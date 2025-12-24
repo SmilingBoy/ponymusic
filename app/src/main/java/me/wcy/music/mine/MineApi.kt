@@ -1,11 +1,13 @@
 package me.wcy.music.mine
 
 import me.wcy.music.discover.playlist.square.bean.PlaylistListData
+import me.wcy.music.mine.bean.NmPlaylistBean
 import me.wcy.music.mine.collect.song.bean.CollectSongResult
 import me.wcy.music.net.HttpClient
 import me.wcy.music.service.likesong.bean.LikeSongListData
 import me.wcy.music.storage.preference.ConfigPreferences
 import retrofit2.Retrofit
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 import top.wangchenyan.common.net.NetResult
@@ -71,6 +73,23 @@ interface MineApi {
         @Query("uid") uid: Long,
         @Query("timestamp") timestamp: Long = ServerTime.currentTimeMillis()
     ): LikeSongListData
+
+    /**
+     * ==============================Navidrome API==============================
+     */
+
+    /**
+     * 获取用户歌单
+     *
+     * _end=15&_order=ASC&_sort=id&_start=0
+     */
+    @GET("api/playlist")
+    suspend fun getPlaylist(
+        @Query("_end") _end: Int = 15,
+        @Query("_order") _order: String = "ASC",
+        @Query("_sort") _sort: String = "id",
+        @Query("_start") _start: Int = 0
+    ): List<NmPlaylistBean>
 
     companion object {
         private val api: MineApi by lazy {

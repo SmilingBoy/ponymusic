@@ -5,6 +5,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -17,11 +18,12 @@ import me.wcy.music.common.bean.PlaylistData
 import me.wcy.music.consts.RoutePath
 import me.wcy.music.databinding.FragmentMineBinding
 import me.wcy.music.main.MainActivity
+import me.wcy.music.mine.bean.NmPlaylistBean
 import me.wcy.music.mine.home.viewmodel.MineViewModel
+import me.wcy.music.mine.playlist.NmUserPlaylistItemBinder
 import me.wcy.music.mine.playlist.UserPlaylistItemBinder
 import me.wcy.radapter3.RAdapter
 import me.wcy.router.CRouter
-import top.wangchenyan.common.ext.loadAvatar
 import top.wangchenyan.common.ext.toast
 import top.wangchenyan.common.ext.viewBindings
 import top.wangchenyan.common.widget.decoration.SpacingDecoration
@@ -84,9 +86,9 @@ class MineFragment : BaseMusicFragment() {
 
     private fun initProfile() {
         lifecycleScope.launch {
-            userService.profile.collectLatest { profile ->
-                viewBinding.ivAvatar.loadAvatar(profile?.avatarUrl)
-                viewBinding.tvNickName.text = profile?.nickname
+            userService.navidromeProfile.collectLatest { profile ->
+//                viewBinding.ivAvatar.loadAvatar(profile?.avatarUrl)
+                viewBinding.tvNickName.text = profile?.name
                 viewBinding.flProfile.setOnClickListener {
                     if (ApiDomainDialog.checkApiDomain(requireActivity())) {
                         if (userService.isLogin().not()) {
@@ -111,8 +113,8 @@ class MineFragment : BaseMusicFragment() {
         val likePlaylistAdapter = RAdapter<PlaylistData>().apply {
             register(UserPlaylistItemBinder(true, ItemClickListener(true, isLike = true)))
         }
-        val myPlaylistAdapter = RAdapter<PlaylistData>().apply {
-            register(UserPlaylistItemBinder(true, ItemClickListener(true, isLike = false)))
+        val myPlaylistAdapter = RAdapter<NmPlaylistBean>().apply {
+            register(NmUserPlaylistItemBinder(true, NmItemClickListener(true, isLike = false)))
         }
         val collectPlaylistAdapter = RAdapter<PlaylistData>().apply {
             register(UserPlaylistItemBinder(false, ItemClickListener(false, isLike = false)))
@@ -177,6 +179,36 @@ class MineFragment : BaseMusicFragment() {
                         if (res.isSuccess().not()) {
                             toast(res.msg)
                         }
+                    }
+                }
+                .build()
+                .show()
+        }
+    }
+    inner class NmItemClickListener(private val isMine: Boolean, private val isLike: Boolean) :
+        NmUserPlaylistItemBinder.OnItemClickListener {
+        override fun onItemClick(item: NmPlaylistBean) {
+            LogUtils.d("NmItemClickListener $item")
+            CRouter.with(requireActivity())
+                .url(RoutePath.PLAYLIST_DETAIL)
+                .extra("id", item.id)
+                .extra("realtime_data", isMine)
+                .extra("is_like", isLike)
+                .start()
+        }
+
+        override fun onMoreClick(item: NmPlaylistBean) {
+            BottomItemsDialogBuilder(requireActivity())
+                .items(listOf("删除"))
+                .onClickListener { dialog, which ->
+                    lifecycleScope.launch {
+                        showLoading()
+                        //todo 兼容注释
+//                        val res = viewModel.removeCollect(item.id)
+                        dismissLoading()
+//                        if (res.isSuccess().not()) {
+//                            toast(res.msg)
+//                        }
                     }
                 }
                 .build()

@@ -126,7 +126,12 @@ class MainActivity : BaseMusicActivity() {
         viewBinding.navigationView.setNavigationItemSelectedListener(onMenuSelectListener)
         // 启动协程观察用户登录状态
         lifecycleScope.launch {
-            userService.profile.collectLatest { profile ->
+//            userService.profile.collectLatest { profile ->
+//                // 根据用户登录状态控制退出登录菜单项的显示
+//                val menuLogout = viewBinding.navigationView.menu.findItem(R.id.action_logout)
+//                menuLogout.isVisible = profile != null
+//            }
+            userService.navidromeProfile.collectLatest { profile ->
                 // 根据用户登录状态控制退出登录菜单项的显示
                 val menuLogout = viewBinding.navigationView.menu.findItem(R.id.action_logout)
                 menuLogout.isVisible = profile != null

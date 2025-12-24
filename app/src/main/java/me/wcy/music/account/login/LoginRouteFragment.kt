@@ -31,6 +31,8 @@ class LoginRouteFragment : BaseMusicFragment() {
             startQrCode()
         } else if (it.resultCode == RESULT_SWITCH_PHONE) {
             startPhone()
+        } else if (it.resultCode == RESULT_SWITCH_PASSWORD) {
+            startPassword()
         } else {
             finish()
         }
@@ -38,7 +40,7 @@ class LoginRouteFragment : BaseMusicFragment() {
 
     override fun onLazyCreate() {
         super.onLazyCreate()
-        startPhone()
+        startPassword()
     }
 
     private fun startPhone() {
@@ -53,8 +55,15 @@ class LoginRouteFragment : BaseMusicFragment() {
             .startForResult(routeResultListener)
     }
 
+    private fun startPassword() {
+        CRouter.with(requireActivity())
+            .url(RoutePath.PASSWORD_LOGIN)
+            .startForResult(routeResultListener)
+    }
+
     companion object {
         const val RESULT_SWITCH_QRCODE = 100
         const val RESULT_SWITCH_PHONE = 200
+        const val RESULT_SWITCH_PASSWORD = 300
     }
 }

@@ -15,22 +15,16 @@ import me.wcy.music.R
 import me.wcy.music.account.service.UserService
 import me.wcy.music.common.BaseMusicFragment
 import me.wcy.music.common.OnItemClickListener2
-import me.wcy.music.common.bean.SongData
-import me.wcy.music.common.dialog.songmenu.SongMoreMenuDialog
-import me.wcy.music.common.dialog.songmenu.items.AlbumMenuItem
-import me.wcy.music.common.dialog.songmenu.items.ArtistMenuItem
-import me.wcy.music.common.dialog.songmenu.items.CollectMenuItem
-import me.wcy.music.common.dialog.songmenu.items.CommentMenuItem
-import me.wcy.music.common.dialog.songmenu.items.DeletePlaylistSongMenuItem
 import me.wcy.music.consts.RoutePath
 import me.wcy.music.databinding.FragmentPlaylistDetailBinding
 import me.wcy.music.databinding.ItemPlaylistTagBinding
+import me.wcy.music.discover.playlist.detail.bean.NmSongData
 import me.wcy.music.discover.playlist.detail.item.PlaylistSongItemBinder
 import me.wcy.music.discover.playlist.detail.viewmodel.PlaylistViewModel
 import me.wcy.music.service.PlayerController
 import me.wcy.music.utils.ConvertUtils
 import me.wcy.music.utils.ImageUtils.loadCover
-import me.wcy.music.utils.toMediaItem
+import me.wcy.music.utils.toNmMediaItem
 import me.wcy.radapter3.RAdapter
 import me.wcy.router.CRouter
 import me.wcy.router.annotation.Route
@@ -49,7 +43,7 @@ import javax.inject.Inject
 class PlaylistDetailFragment : BaseMusicFragment() {
     private val viewBinding by viewBindings<FragmentPlaylistDetailBinding>()
     private val viewModel by viewModels<PlaylistViewModel>()
-    private val adapter by lazy { RAdapter<SongData>() }
+    private val adapter by lazy { RAdapter<NmSongData>() }
     private var collectMenu: View? = null
 
     @Inject
@@ -78,10 +72,10 @@ class PlaylistDetailFragment : BaseMusicFragment() {
     override fun onLazyCreate() {
         super.onLazyCreate()
 
-        val id = getRouteArguments().getLongExtra("id", 0)
+        val id = getRouteArguments().getStringExtra("id")
         val realtimeData = getRouteArguments().getBooleanExtra("realtime_data", false)
         val isLike = getRouteArguments().getBooleanExtra("is_like", false)
-        if (id <= 0) {
+        if (id.isNullOrBlank()) {
             finish()
             return
         }
@@ -180,38 +174,39 @@ class PlaylistDetailFragment : BaseMusicFragment() {
 
     private fun initSongList() {
         viewBinding.llPlayAll.setOnClickListener {
-            val songList = viewModel.songList.value.map { it.toMediaItem() }
+            val songList = viewModel.songList.value.map { it.toNmMediaItem() }
             if (songList.isNotEmpty()) {
                 playerController.replaceAll(songList, songList.first())
                 CRouter.with(requireContext()).url(RoutePath.PLAYING).start()
             }
         }
 
-        adapter.register(PlaylistSongItemBinder(object : OnItemClickListener2<SongData> {
-            override fun onItemClick(item: SongData, position: Int) {
-                val songList = viewModel.songList.value.map { it.toMediaItem() }
+        adapter.register(PlaylistSongItemBinder(object : OnItemClickListener2<NmSongData> {
+            override fun onItemClick(item: NmSongData, position: Int) {
+                val songList = viewModel.songList.value.map { it.toNmMediaItem() }
                 if (songList.isNotEmpty()) {
                     playerController.replaceAll(songList, songList[position])
                     CRouter.with(requireContext()).url(RoutePath.PLAYING).start()
                 }
             }
 
-            override fun onMoreClick(item: SongData, position: Int) {
-                val items = mutableListOf(
-                    CollectMenuItem(lifecycleScope, item),
-                    CommentMenuItem(item),
-                    ArtistMenuItem(item),
-                    AlbumMenuItem(item)
-                )
+            override fun onMoreClick(item: NmSongData, position: Int) {
+//                val items = mutableListOf(
+//                    CollectMenuItem(lifecycleScope, item),
+//                    CommentMenuItem(item),
+//                    ArtistMenuItem(item),
+//                    AlbumMenuItem(item)
+//                )
                 val playlistData = viewModel.playlistData.value
-                if (playlistData != null && playlistData.creator.userId == userService.getUserId()) {
-                    items.add(DeletePlaylistSongMenuItem(playlistData, item) {
-                        viewModel.removeSong(it)
-                    })
-                }
-                SongMoreMenuDialog(requireActivity(), item)
-                    .setItems(items)
-                    .show()
+                // todo 兼容注释
+//                if (playlistData != null && playlistData.creator.userId == userService.getUserId()) {
+//                    items.add(DeletePlaylistSongMenuItem(playlistData, item) {
+//                        viewModel.removeSong(it)
+//                    })
+//                }
+//                SongMoreMenuDialog(requireActivity(), item)
+//                    .setItems(items)
+//                    .show()
             }
         }))
         viewBinding.recyclerView.adapter = adapter
@@ -229,10 +224,11 @@ class PlaylistDetailFragment : BaseMusicFragment() {
             collectMenu?.isVisible = false
             return
         }
-        if (userService.getUserId() == playlistData.userId) {
-            collectMenu?.isVisible = false
-            return
-        }
+        //todo 兼容注释
+//        if (userService.getUserId() == playlistData.userId) {
+//            collectMenu?.isVisible = false
+//            return
+//        }
         collectMenu?.isVisible = true
         collectMenu?.isSelected = playlistData.subscribed
     }

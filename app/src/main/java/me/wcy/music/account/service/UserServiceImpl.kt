@@ -7,6 +7,8 @@ import kotlinx.coroutines.withContext
 import me.wcy.music.account.AccountApi
 import me.wcy.music.account.AccountPreference
 import me.wcy.music.account.bean.ProfileData
+import me.wcy.music.account.bean.navidrome.LoginResultBean
+import me.wcy.music.account.bean.navidrome.UserProfileBean
 import me.wcy.music.consts.RoutePath
 import me.wcy.music.net.NetCache
 import me.wcy.router.CRouter
@@ -24,16 +26,19 @@ class UserServiceImpl @Inject constructor() : UserService {
     private val _profile = MutableStateFlow(AccountPreference.profile)
     override val profile = _profile.toUnMutable()
 
+    private val _navidromeProfile = MutableStateFlow(AccountPreference.navidromeProfile)
+    override val navidromeProfile = _navidromeProfile.toUnMutable()
+
     override fun getCookie(): String {
         return AccountPreference.cookie
     }
 
     override fun isLogin(): Boolean {
-        return profile.value != null
+        return _navidromeProfile.value != null
     }
 
-    override fun getUserId(): Long {
-        return _profile.value?.userId ?: 0
+    override fun getUserId(): String {
+        return _navidromeProfile.value?.id ?: ""
     }
 
     override suspend fun login(cookie: String): CommonResult<ProfileData> {
@@ -59,6 +64,31 @@ class UserServiceImpl @Inject constructor() : UserService {
             AccountPreference.cookie = ""
             CommonResult.fail(msg = res.exceptionOrNull()?.message)
         }
+    }
+
+
+    override suspend fun navidromeLogin(loginResultBean: LoginResultBean): List<UserProfileBean> {
+        AccountPreference.navidromeLogin = loginResultBean
+
+        val res = kotlin.runCatching {
+            AccountApi.get().userProfile()
+        }
+        val profileBeanData = res.getOrThrow()
+        if (!profileBeanData.isEmpty()) {
+            _navidromeProfile.value = res.getOrThrow().first()
+            AccountPreference.navidromeLogin = loginResultBean
+            AccountPreference.navidromeProfile = res.getOrThrow().first()
+        }
+
+        return if (res.isSuccess) {
+            res.getOrThrow()
+        } else {
+            emptyList()
+        }
+    }
+
+    override fun getNavidromeToken(): String {
+        return AccountPreference.navidromeLogin?.token ?: ""
     }
 
     override suspend fun logout() {

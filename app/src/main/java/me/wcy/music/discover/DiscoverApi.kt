@@ -6,6 +6,7 @@ import me.wcy.music.common.bean.LrcDataWrap
 import me.wcy.music.common.bean.SongData
 import me.wcy.music.common.bean.SongUrlData
 import me.wcy.music.discover.banner.BannerListData
+import me.wcy.music.discover.playlist.detail.bean.NmSongData
 import me.wcy.music.discover.playlist.detail.bean.PlaylistDetailData
 import me.wcy.music.discover.playlist.detail.bean.SongListData
 import me.wcy.music.discover.playlist.square.bean.PlaylistListData
@@ -16,6 +17,7 @@ import me.wcy.music.storage.preference.ConfigPreferences
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 import top.wangchenyan.common.net.NetResult
 import top.wangchenyan.common.net.gson.GsonConverterFactory
@@ -71,6 +73,36 @@ interface DiscoverApi {
 
     @GET("banner?type=2")
     suspend fun getBannerList(): BannerListData
+
+
+    /**
+     * ==========================Navidrome API==========================
+     */
+
+
+    /**
+     * 获取歌单歌曲列表
+     * http://127.0.0.1:9003/api/playlist/90e24be5-bf4d-4d54-a7b8-bd6e6cb5a1b5/tracks?_end=100&_order=ASC&_sort=id&_start=0&playlist_id=90e24be5-bf4d-4d54-a7b8-bd6e6cb5a1b5
+     */
+    @GET("api/playlist/{pid}/tracks")
+    suspend fun getPlaylistSongList(
+        @Path("pid") pid: String,
+        @Query("_end") end: Int = 100,
+        @Query("_order") order: String = "ASC",
+        @Query("_sort") sort: String = "id",
+        @Query("_start") start: Int = 0,
+        @Query("playlist_id") playlistId: String = "",
+    ): List<NmSongData>
+
+    /**
+     * 歌曲详情
+     * http://127.0.0.1:9003/api/song/18551f5f78e968d5c730408dd23d13a8
+     */
+    @GET("api/song/{id}")
+    suspend fun getSongDetail(
+        @Path("id") id: String
+    ): NmSongData
+
 
     companion object {
         private const val SONG_LIST_LIMIT = 800
