@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import me.wcy.music.consts.FilePath
 import me.wcy.music.utils.getFilePath
+import me.wcy.music.utils.getNmSongId
 import me.wcy.music.utils.getSongId
 import me.wcy.music.utils.isLocal
 import java.io.File
@@ -25,7 +26,7 @@ object LrcCache {
                 return lrcFile.path
             }
         } else {
-            val lrcFile = File(FilePath.lrcDir, music.getSongId().toString())
+            val lrcFile = File(FilePath.lrcDir, music.getNmSongId().toString())
             if (lrcFile.exists()) {
                 return lrcFile.path
             }
@@ -35,7 +36,7 @@ object LrcCache {
 
     suspend fun saveLrcFile(music: MediaItem, content: String): File {
         return withContext(Dispatchers.IO) {
-            File(FilePath.lrcDir, music.getSongId().toString()).also {
+            File(FilePath.lrcDir, music.getNmSongId().toString()).also {
                 it.writeText(content)
             }
         }

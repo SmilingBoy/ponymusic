@@ -24,6 +24,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.media3.common.MediaItem
+import com.blankj.utilcode.util.LogUtils
 import dagger.hilt.android.AndroidEntryPoint
 import jp.wasabeef.blurry.Blurry
 import kotlinx.coroutines.Job
@@ -44,9 +45,11 @@ import me.wcy.music.service.likesong.LikeSongProcessor
 import me.wcy.music.storage.LrcCache
 import me.wcy.music.storage.preference.ConfigPreferences
 import me.wcy.music.utils.BitmapUtils.transAlpha
+import me.wcy.music.utils.LrcUtil
 import me.wcy.music.utils.TimeUtils
 import me.wcy.music.utils.getDuration
 import me.wcy.music.utils.getLargeCover
+import me.wcy.music.utils.getNmSongId
 import me.wcy.music.utils.getSongId
 import me.wcy.music.utils.isLocal
 import me.wcy.router.annotation.Route
@@ -88,6 +91,7 @@ class PlayingActivity : BaseMusicActivity() {
     private val defaultCoverBitmap by lazy {
         BitmapFactory.decodeResource(resources, R.drawable.bg_playing_default_cover)
     }
+
     // 默认背景图片
     private val defaultBgBitmap by lazy {
         BitmapFactory.decodeResource(
@@ -107,6 +111,7 @@ class PlayingActivity : BaseMusicActivity() {
 
     // 上次更新的进度时间戳（毫秒）
     private var lastProgress = 0
+
     // 是否正在拖动进度条
     private var isDraggingProgress = false
 
@@ -182,10 +187,10 @@ class PlayingActivity : BaseMusicActivity() {
      */
     private fun initVolume() {
         // 设置音量进度条的最大值为系统音乐音量的最大值
-        viewBinding.volumeLayout.sbVolume.max = 
+        viewBinding.volumeLayout.sbVolume.max =
             audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         // 设置音量进度条的当前值为系统音乐音量的当前值
-        viewBinding.volumeLayout.sbVolume.progress = 
+        viewBinding.volumeLayout.sbVolume.progress =
             audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
         // 创建音量变化广播过滤器
         val filter = IntentFilter(VOLUME_CHANGED_ACTION)
@@ -319,7 +324,7 @@ class PlayingActivity : BaseMusicActivity() {
                 // 避免过于频繁更新时间显示，每1秒更新一次
                 if (abs(progress - lastProgress) >= DateUtils.SECOND_IN_MILLIS) {
                     // 更新当前播放时间
-                    viewBinding.controlLayout.tvCurrentTime.text = 
+                    viewBinding.controlLayout.tvCurrentTime.text =
                         TimeUtils.formatMs(progress.toLong())
                     // 记录上次更新的进度
                     lastProgress = progress
@@ -389,15 +394,15 @@ class PlayingActivity : BaseMusicActivity() {
             // 设置进度条最大值
             viewBinding.controlLayout.sbProgress.max = song.mediaMetadata.getDuration().toInt()
             // 设置当前进度
-            viewBinding.controlLayout.sbProgress.progress = 
+            viewBinding.controlLayout.sbProgress.progress =
                 playerController.playProgress.value.toInt()
             // 重置缓冲进度
             viewBinding.controlLayout.sbProgress.secondaryProgress = 0
             // 更新当前播放时间
-            viewBinding.controlLayout.tvCurrentTime.text = 
+            viewBinding.controlLayout.tvCurrentTime.text =
                 TimeUtils.formatMs(playerController.playProgress.value)
             // 更新总时长
-            viewBinding.controlLayout.tvTotalTime.text = 
+            viewBinding.controlLayout.tvTotalTime.text =
                 TimeUtils.formatMs(song.mediaMetadata.getDuration())
             // 更新封面
             updateCover(song)
@@ -415,6 +420,7 @@ class PlayingActivity : BaseMusicActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 playerController.currentSong.collectLatest { song ->
                     if (song != null) {
+                        LogUtils.d(" songId ${song.getNmSongId()}")
                         // 更新歌曲信息
                         onSongUpdate(song)
                     } else {
@@ -451,7 +457,7 @@ class PlayingActivity : BaseMusicActivity() {
         lifecycleScope.launch {
             playerController.bufferingPercent.collectLatest { percent ->
                 // 更新缓冲进度条
-                viewBinding.controlLayout.sbProgress.secondaryProgress = 
+                viewBinding.controlLayout.sbProgress.secondaryProgress =
                     viewBinding.controlLayout.sbProgress.max * percent / 100
             }
         }
@@ -559,19 +565,28 @@ class PlayingActivity : BaseMusicActivity() {
             loadLrcJob = lifecycleScope.launch {
                 kotlin.runCatching {
                     // 调用API获取歌词
-                    val lrcWrap = DiscoverApi.get().getLrc(song.getSongId())
+                    val lrcWrap = DiscoverApi.get().getAlbumSongDetail(albumId = song.getNmSongId())
                     // 检查歌词是否有效
-                    if (lrcWrap.code == 200 && lrcWrap.lrc.isValid()) {
-                        lrcWrap.lrc
-                    } else {
+                    val lrcWrapD = lrcWrap.firstOrNull()
+                    if (lrcWrapD == null) {
+                        throw IllegalStateException("lrcWrapD is null")
+                    }
+
+                    val lrc = lrcWrapD.lyrics.ifEmpty {
                         throw IllegalStateException("lrc is invalid")
                     }
-                }.onSuccess { 
+                    val parseLrc = LrcUtil.parseLrc(lrc)
+                    if (parseLrc.isEmpty()){
+                        throw IllegalStateException("parseLrc is invalid")
+                    }
+                    parseLrc
+                }.onSuccess {
                     // 保存歌词到缓存
-                    val file = LrcCache.saveLrcFile(song, it.lyric)
+                    val file = LrcCache.saveLrcFile(song, it)
+                    LogUtils.d("保存的歌词文件 $file")
                     // 加载保存的歌词
                     loadLrc(file.path)
-                }.onFailure { 
+                }.onFailure {
                     // 打印错误日志
                     Log.e(TAG, "load lrc error", it)
                     // 显示加载失败提示

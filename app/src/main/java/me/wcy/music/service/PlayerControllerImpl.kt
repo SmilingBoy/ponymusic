@@ -171,6 +171,9 @@ class PlayerControllerImpl(
 
         AccountPreference.navidromeLogin?.let {
             GlobalScope.launch(Dispatchers.IO) {
+                if (submission) {
+                    delay(5000)
+                }
                 DiscoverApi.get().scrobble(
                     username = it.username,
                     salt = it.subsonicSalt,
