@@ -470,6 +470,9 @@ class PlayingActivity : BaseMusicActivity() {
     private fun updateCover(song: MediaItem) {
         // 先设置默认封面
         setDefaultCover()
+
+        LogUtils.d("加载歌曲封面 ${song.getLargeCover()}")
+
         // 加载歌曲封面
         ImageUtils.loadBitmap(song.getLargeCover()) {
             if (it.isSuccessWithData()) {
@@ -583,7 +586,6 @@ class PlayingActivity : BaseMusicActivity() {
                 }.onSuccess {
                     // 保存歌词到缓存
                     val file = LrcCache.saveLrcFile(song, it)
-                    LogUtils.d("保存的歌词文件 $file")
                     // 加载保存的歌词
                     loadLrc(file.path)
                 }.onFailure {
