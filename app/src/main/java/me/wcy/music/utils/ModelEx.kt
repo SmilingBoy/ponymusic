@@ -73,13 +73,11 @@ fun NmSongData.toNmMediaItem(): MediaItem {
     val uri = Uri.Builder()
         .scheme(SCHEME_NETEASE)
         .authority(CommonApp.app.packageName)
-        .appendQueryParameter(PARAM_ID, mediaFileId.toString())
+        .appendQueryParameter(PARAM_ID, id)
         .build()
 
-    LogUtils.d("${SongEntity.ONLINE}#$mediaFileId")
-
     return MediaItem.Builder()
-        .setMediaId("${SongEntity.ONLINE}#$mediaFileId")
+        .setMediaId("${SongEntity.ONLINE}#$id")
         .setUri(uri)
         .setMediaMetadata(
             MediaMetadata.Builder()
@@ -88,7 +86,7 @@ fun NmSongData.toNmMediaItem(): MediaItem {
                 .setAlbumTitle(album)
                 .setAlbumArtist(albumArtist)
 //                .setArtworkUri(Uri.parse(al.getLargeCover()))
-                .setBaseCover(NavidromeUtil.getCover(mediaFileId) ?: "")
+                .setBaseCover(NavidromeUtil.getCover(id) ?: "")
                 .setDuration((duration * 1000L).toLong())
                 .build()
         )

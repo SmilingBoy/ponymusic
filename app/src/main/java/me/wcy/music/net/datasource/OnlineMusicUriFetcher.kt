@@ -1,7 +1,6 @@
 package me.wcy.music.net.datasource
 
 import android.net.Uri
-import com.blankj.utilcode.util.LogUtils
 import kotlinx.coroutines.runBlocking
 import me.wcy.music.account.AccountPreference
 import me.wcy.music.discover.DiscoverApi
@@ -20,7 +19,7 @@ object OnlineMusicUriFetcher {
 
             if (type == OnlineIdType.ALBUM) {
                 val res = kotlin.runCatching {
-                    DiscoverApi.get().getAlbumSongDetail(albumId = songId)
+                    DiscoverApi.get().getSongList(albumId = songId)
                 }
                 if (res.isSuccess) {
                     val d = res.getOrThrow().first()

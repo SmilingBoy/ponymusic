@@ -109,11 +109,12 @@ interface DiscoverApi {
      * http://127.0.0.1:9003/api/song?_end=-1&_order=ASC&_sort=trackNumber&_start=0&album_id=885b3c2609933c220a8ce87d95d89c63
      */
     @GET("api/song")
-    suspend fun getAlbumSongDetail(
+    suspend fun getSongList(
         @Query("_end") end: Int = -1,
         @Query("_order") order: String = "ASC",
         @Query("_sort") sort: String = "trackNumber",
         @Query("_start") start: Int = 0,
+        @Query("seed") seed: String = "",
         @Query("album_id") albumId: String = "",
     ): List<NmSongData>
 
@@ -121,7 +122,7 @@ interface DiscoverApi {
      * 歌曲列表
      */
     @GET("api/album")
-    suspend fun getSongList(
+    suspend fun getAlbumList(
         @Query("_end") end: Int = 20,
         @Query("_order") order: String = "ASC",
         @Query("_sort") sort: String = "random",

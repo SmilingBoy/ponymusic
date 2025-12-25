@@ -471,8 +471,6 @@ class PlayingActivity : BaseMusicActivity() {
         // 先设置默认封面
         setDefaultCover()
 
-        LogUtils.d("加载歌曲封面 ${song.getLargeCover()}")
-
         // 加载歌曲封面
         ImageUtils.loadBitmap(song.getLargeCover()) {
             if (it.isSuccessWithData()) {
@@ -568,12 +566,7 @@ class PlayingActivity : BaseMusicActivity() {
             loadLrcJob = lifecycleScope.launch {
                 kotlin.runCatching {
                     // 调用API获取歌词
-                    val lrcWrap = DiscoverApi.get().getAlbumSongDetail(albumId = song.getNmSongId())
-                    // 检查歌词是否有效
-                    val lrcWrapD = lrcWrap.firstOrNull()
-                    if (lrcWrapD == null) {
-                        throw IllegalStateException("lrcWrapD is null")
-                    }
+                    val lrcWrapD = DiscoverApi.get().getSongDetail(song.getNmSongId())
 
                     val lrc = lrcWrapD.lyrics.ifEmpty {
                         throw IllegalStateException("lrc is invalid")

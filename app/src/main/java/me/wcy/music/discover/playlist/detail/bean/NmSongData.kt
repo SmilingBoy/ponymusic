@@ -26,6 +26,8 @@ data class NmSongData(
     var compilation: Boolean = false,
     @SerializedName("createdAt")
     var createdAt: String = "",
+    @SerializedName("date")
+    var date: String = "",
     @SerializedName("discNumber")
     var discNumber: Int = 0,
     @SerializedName("duration")
@@ -42,8 +44,6 @@ data class NmSongData(
     var libraryId: Int = 0,
     @SerializedName("lyrics")
     var lyrics: String = "",
-    @SerializedName("mediaFileId")
-    var mediaFileId: String = "",
     @SerializedName("orderAlbumArtistName")
     var orderAlbumArtistName: String = "",
     @SerializedName("orderAlbumName")
@@ -60,8 +60,6 @@ data class NmSongData(
     var playCount: Int = 0,
     @SerializedName("playDate")
     var playDate: Any? = Any(),
-    @SerializedName("playlistId")
-    var playlistId: String = "",
     @SerializedName("rating")
     var rating: Int = 0,
     @SerializedName("releaseYear")

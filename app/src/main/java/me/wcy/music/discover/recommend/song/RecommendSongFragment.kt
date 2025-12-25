@@ -10,10 +10,9 @@ import me.wcy.music.common.OnItemClickListener2
 import me.wcy.music.consts.RoutePath
 import me.wcy.music.databinding.FragmentRecommendSongBinding
 import me.wcy.music.discover.DiscoverApi
-import me.wcy.music.discover.playlist.detail.bean.NmAlbumData
+import me.wcy.music.discover.playlist.detail.bean.NmSongData
 import me.wcy.music.discover.recommend.song.item.RecommendSongItemBinder
 import me.wcy.music.service.PlayerController
-import me.wcy.music.utils.albumToMediaItem
 import me.wcy.music.utils.toNmMediaItem
 import me.wcy.radapter3.RAdapter
 import me.wcy.router.CRouter
@@ -30,7 +29,7 @@ import javax.inject.Inject
 class RecommendSongFragment : BaseMusicFragment() {
     private val viewBinding by viewBindings<FragmentRecommendSongBinding>()
     private val adapter by lazy {
-        RAdapter<NmAlbumData>()
+        RAdapter<NmSongData>()
     }
 
     @Inject
@@ -60,16 +59,16 @@ class RecommendSongFragment : BaseMusicFragment() {
             navBarColor = getColor(R.color.play_bar_bg)
         }
 
-        adapter.register(RecommendSongItemBinder(object : OnItemClickListener2<NmAlbumData> {
-            override fun onItemClick(item: NmAlbumData, position: Int) {
+        adapter.register(RecommendSongItemBinder(object : OnItemClickListener2<NmSongData> {
+            override fun onItemClick(item: NmSongData, position: Int) {
                 val entityList = adapter.getDataList().map {
-                    it.albumToMediaItem()
+                    it.toNmMediaItem()
                 }
                 playerController.replaceAll(entityList, entityList[position])
                 CRouter.with(requireContext()).url(RoutePath.PLAYING).start()
             }
 
-            override fun onMoreClick(item: NmAlbumData, position: Int) {
+            override fun onMoreClick(item: NmSongData, position: Int) {
 //                SongMoreMenuDialog(requireActivity(), item)
 //                    .setItems(
 //                        listOf(
@@ -85,7 +84,7 @@ class RecommendSongFragment : BaseMusicFragment() {
         viewBinding.recyclerView.adapter = adapter
         viewBinding.tvPlayAll.setOnClickListener {
             val entityList = adapter.getDataList().map {
-                it.albumToMediaItem()
+                it.toNmMediaItem()
             }
             playerController.replaceAll(entityList, entityList.first())
             CRouter.with(requireContext()).url(RoutePath.PLAYING).start()
@@ -98,7 +97,13 @@ class RecommendSongFragment : BaseMusicFragment() {
         lifecycleScope.launch {
             showLoadSirLoading()
             val res = kotlin.runCatching {
-                DiscoverApi.get().getSongList(seed = System.currentTimeMillis().toString())
+                DiscoverApi.get()
+                    .getSongList(
+                        seed = System.currentTimeMillis().toString(),
+                        sort = "random",
+                        start = 0,
+                        end = 30
+                    )
             }
             if (res.isSuccess) {
                 showLoadSirSuccess()
