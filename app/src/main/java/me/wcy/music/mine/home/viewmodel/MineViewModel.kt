@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.wcy.music.account.service.UserService
 import me.wcy.music.common.bean.PlaylistData
+import me.wcy.music.discover.playlist.detail.bean.NmSongData
 import me.wcy.music.mine.MineApi
 import me.wcy.music.mine.bean.NmPlaylistBean
 import me.wcy.music.net.NetCache
@@ -52,8 +53,9 @@ class MineViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             if (userService.isLogin()) {
                 val uid = userService.profile.value?.userId ?: return@launch
-                val cacheList = NetCache.userCache.getJsonArray(CACHE_KEY, NmPlaylistBean::class.java)
-                    ?: return@launch
+                val cacheList =
+                    NetCache.userCache.getJsonArray(CACHE_KEY, NmPlaylistBean::class.java)
+                        ?: return@launch
                 notifyPlaylist(uid, cacheList)
             }
         }
@@ -62,8 +64,10 @@ class MineViewModel @Inject constructor() : ViewModel() {
     fun updatePlaylist() {
         if (userService.isLogin()) {
             updatePlaylist(1)
+            updateLikeList()
         }
     }
+
 
     private fun updatePlaylist(uid: Long) {
         updateJob?.cancel()
@@ -77,9 +81,36 @@ class MineViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    private fun updateLikeList() {
+        viewModelScope.launch {
+            val res = kotlin.runCatching {
+                MineApi.get().getCollectSongList(userService.getUserId())
+            }
+            val data = res.getOrNull()
+            if (data != null) {
+                notifyLikeList(data)
+            }
+        }
+    }
+
+    private fun notifyLikeList(list: List<NmSongData>) {
+        _likePlaylist.value = PlaylistData(
+            id = 0,
+            name = "收藏",
+            coverImgUrl = "",
+            subscribed = false,
+            trackCount = list.size,
+            userId = 0,
+            playCount = 0,
+            bookCount = 0,
+            highQuality = false,
+            updateFrequency = "",
+            toplistType = "",
+        )
+    }
+
     private fun notifyPlaylist(uid: Long, list: List<NmPlaylistBean>) {
 //        val mineList = list.filter { it.userId == uid }
-//        _likePlaylist.value = mineList.firstOrNull()
         _myPlaylists.value = list
 //        _collectPlaylists.value = list.filter { it.userId != uid }
     }

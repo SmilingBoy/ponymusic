@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import me.wcy.music.R
 import me.wcy.music.common.bean.PlaylistData
 import me.wcy.music.databinding.FragmentCollectSongBinding
+import me.wcy.music.mine.collect.song.viewmodel.CollectSongViewModel
 import me.wcy.music.mine.playlist.UserPlaylistItemBinder
 import me.wcy.radapter3.RAdapter
 import top.wangchenyan.common.ext.toast

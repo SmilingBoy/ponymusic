@@ -9,8 +9,10 @@ import top.wangchenyan.common.widget.dialog.BottomDialogBuilder
 import me.wcy.music.common.bean.SongData
 import me.wcy.music.databinding.DialogSongMoreMenuBinding
 import me.wcy.music.databinding.ItemSongMoreMenuBinding
+import me.wcy.music.discover.playlist.detail.bean.NmSongData
 import me.wcy.music.storage.db.entity.SongEntity
 import me.wcy.music.utils.ImageUtils.loadCover
+import me.wcy.music.utils.NavidromeUtil
 import me.wcy.music.utils.getSimpleArtist
 
 /**
@@ -20,6 +22,7 @@ class SongMoreMenuDialog {
     private val context: Context
     private var songEntity: SongEntity? = null
     private var songData: SongData? = null
+    private var nmSongData: NmSongData? = null
     private val items = mutableListOf<MenuItem>()
 
     constructor(context: Context, songEntity: SongEntity) {
@@ -30,6 +33,11 @@ class SongMoreMenuDialog {
     constructor(context: Context, songData: SongData) {
         this.context = context
         this.songData = songData
+    }
+
+    constructor(context: Context, nmSongData: NmSongData) {
+        this.context = context
+        this.nmSongData = nmSongData
     }
 
     fun setItems(items: List<MenuItem>) = apply {
@@ -62,6 +70,10 @@ class SongMoreMenuDialog {
             viewBinding.ivCover.loadCover(songData.al.getSmallCover(), SizeUtils.dp2px(4f))
             viewBinding.tvTitle.text = "歌曲: ${songData.name}"
             viewBinding.tvArtist.text = songData.getSimpleArtist()
+        }else if (nmSongData != null){
+            viewBinding.ivCover.loadCover(NavidromeUtil.getCover(nmSongData?.id!!), SizeUtils.dp2px(4f))
+            viewBinding.tvTitle.text = "歌曲: ${nmSongData?.title}"
+            viewBinding.tvArtist.text = nmSongData?.artist
         }
     }
 

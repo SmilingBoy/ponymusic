@@ -1,4 +1,4 @@
-package me.wcy.music.mine.collect.song
+package me.wcy.music.mine.collect.song.viewmodel
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,32 +24,32 @@ class CollectSongViewModel @Inject constructor() : ViewModel() {
 
     suspend fun getMyPlayList(): CommonResult<List<PlaylistData>> {
         val uid = userService.profile.value?.userId ?: 0
-        val res = kotlin.runCatching {
-            MineApi.get().getUserPlaylist(uid)
+        val res = runCatching {
+            MineApi.Companion.get().getUserPlaylist(uid)
         }
         val playlistData = res.getOrNull()
         return if (playlistData?.code == 200) {
             val list = playlistData.playlists.filter { it.userId == uid }
             _myPlaylists.value = list
-            CommonResult.success(list)
+            CommonResult.Companion.success(list)
         } else {
-            CommonResult.fail(playlistData?.code ?: -1)
+            CommonResult.Companion.fail(playlistData?.code ?: -1)
         }
     }
 
     suspend fun collectSong(pid: Long): CommonResult<Unit> {
-        val res = kotlin.runCatching {
-            MineApi.get().collectSong(pid, songId.toString())
+        val res = runCatching {
+            MineApi.Companion.get().collectSong(pid, songId.toString())
         }
         return if (res.isSuccess) {
             val body = res.getOrThrow().body
             if (body.code == 200) {
-                CommonResult.success(Unit)
+                CommonResult.Companion.success(Unit)
             } else {
-                CommonResult.fail(body.code, body.message)
+                CommonResult.Companion.fail(body.code, body.message)
             }
         } else {
-            CommonResult.fail(msg = res.exceptionOrNull()?.message)
+            CommonResult.Companion.fail(msg = res.exceptionOrNull()?.message)
         }
     }
 }

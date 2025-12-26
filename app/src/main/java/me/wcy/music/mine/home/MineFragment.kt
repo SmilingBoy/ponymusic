@@ -160,12 +160,17 @@ class MineFragment : BaseMusicFragment() {
     inner class ItemClickListener(private val isMine: Boolean, private val isLike: Boolean) :
         UserPlaylistItemBinder.OnItemClickListener {
         override fun onItemClick(item: PlaylistData) {
-            CRouter.with(requireActivity())
-                .url(RoutePath.PLAYLIST_DETAIL)
-                .extra("id", item.id)
-                .extra("realtime_data", isMine)
-                .extra("is_like", isLike)
-                .start()
+
+            if (isLike) {
+                CRouter.with().url(RoutePath.COLLECT_SONG_LIST).start()
+            } else {
+                CRouter.with(requireActivity())
+                    .url(RoutePath.PLAYLIST_DETAIL)
+                    .extra("id", item.id)
+                    .extra("realtime_data", isMine)
+                    .extra("is_like", isLike)
+                    .start()
+            }
         }
 
         override fun onMoreClick(item: PlaylistData) {
@@ -185,6 +190,7 @@ class MineFragment : BaseMusicFragment() {
                 .show()
         }
     }
+
     inner class NmItemClickListener(private val isMine: Boolean, private val isLike: Boolean) :
         NmUserPlaylistItemBinder.OnItemClickListener {
         override fun onItemClick(item: NmPlaylistBean) {

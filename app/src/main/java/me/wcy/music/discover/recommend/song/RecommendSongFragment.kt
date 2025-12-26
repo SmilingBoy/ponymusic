@@ -10,6 +10,8 @@ import kotlinx.coroutines.launch
 import me.wcy.music.R
 import me.wcy.music.common.BaseMusicFragment
 import me.wcy.music.common.OnItemClickListener2
+import me.wcy.music.common.dialog.songmenu.SongMoreMenuDialog
+import me.wcy.music.common.dialog.songmenu.items.CollectMenuItem
 import me.wcy.music.consts.RoutePath
 import me.wcy.music.databinding.FragmentRecommendSongBinding
 import me.wcy.music.discover.DiscoverApi
@@ -72,16 +74,16 @@ class RecommendSongFragment : BaseMusicFragment() {
             }
 
             override fun onMoreClick(item: NmSongData, position: Int) {
-//                SongMoreMenuDialog(requireActivity(), item)
-//                    .setItems(
-//                        listOf(
+                SongMoreMenuDialog(requireActivity(), item)
+                    .setItems(
+                        listOf(
 //                            CollectMenuItem(lifecycleScope, item),
 //                            CommentMenuItem(item),
 //                            ArtistMenuItem(item),
 //                            AlbumMenuItem(item)
-//                        )
-//                    )
-//                    .show()
+                        )
+                    )
+                    .show()
             }
         }))
         viewBinding.recyclerView.adapter = adapter
