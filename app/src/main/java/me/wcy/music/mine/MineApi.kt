@@ -1,7 +1,9 @@
 package me.wcy.music.mine
 
+import me.wcy.music.discover.playlist.detail.bean.NmSongData
 import me.wcy.music.discover.playlist.square.bean.PlaylistListData
 import me.wcy.music.mine.bean.NmPlaylistBean
+import me.wcy.music.mine.bean.NmRestData
 import me.wcy.music.mine.collect.song.bean.CollectSongResult
 import me.wcy.music.net.HttpClient
 import me.wcy.music.service.likesong.bean.LikeSongListData
@@ -90,6 +92,51 @@ interface MineApi {
         @Query("_sort") _sort: String = "id",
         @Query("_start") _start: Int = 0
     ): List<NmPlaylistBean>
+
+    //http://127.0.0.1:9003/api/album?_end=12&_order=DESC&_sort=starred_at&_start=0&seed=0.20247334231290426-0&starred=true
+    /**
+     * 收藏列表
+     */
+    @GET("api/song")
+    suspend fun getCollectSongList(
+//        @Query("_end") end: Int = -1,
+        @Query("_order") order: String = "DESC",
+        @Query("_sort") sort: String = "starred_at",
+        @Query("_start") start: Int = 0,
+        @Query("seed") seed: String = "",
+        @Query("album_id") albumId: String = "",
+        @Query("starred") starred: Boolean = true,
+    ): List<NmSongData>
+
+
+    /**
+     * 添加收藏
+     */
+    @GET("rest/star")
+    suspend fun addCollect(
+        @Query("f") format: String = "json",
+        @Query("v") version: String = "1.8.0",
+        @Query("c") client: String = "NavidromeUI",
+        @Query("u") username: String,
+        @Query("s") salt: String,
+        @Query("t") saltToken: String,
+        @Query("id") id: String,
+    ): NetResult<NmRestData>
+
+    /**
+     * 取消收藏
+     */
+    @GET("rest/unstar")
+    suspend fun removeCollect(
+        @Query("f") format: String = "json",
+        @Query("v") version: String = "1.8.0",
+        @Query("c") client: String = "NavidromeUI",
+        @Query("u") username: String,
+        @Query("s") salt: String,
+        @Query("t") saltToken: String,
+        @Query("id") id: String,
+    ): NetResult<NmRestData>
+
 
     companion object {
         private val api: MineApi by lazy {

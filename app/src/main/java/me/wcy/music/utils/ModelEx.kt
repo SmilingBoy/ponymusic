@@ -26,6 +26,8 @@ const val EXTRA_FILE_NAME = "file_name"
 const val EXTRA_FILE_SIZE = "file_size"
 const val EXTRA_BASE_COVER = "base_cover"
 
+const val EXTRA_IS_LIKED = "is_liked"
+
 fun SongData.getSimpleArtist(): String {
     return ar.joinToString("/") { it.name }
 }
@@ -88,6 +90,7 @@ fun NmSongData.toNmMediaItem(): MediaItem {
 //                .setArtworkUri(Uri.parse(al.getLargeCover()))
                 .setBaseCover(NavidromeUtil.getCover(id) ?: "")
                 .setDuration((duration * 1000L).toLong())
+                .setLiked(starred)
                 .build()
         )
         .build()
@@ -233,4 +236,14 @@ fun MediaItem.getLargeCover(): String {
     } else {
         baseCover?.asLargeCover() ?: ""
     }
+}
+
+fun MediaItem.isLiked(): Boolean {
+    return mediaMetadata.extras?.getBoolean(EXTRA_IS_LIKED) ?: false
+}
+
+fun MediaMetadata.Builder.setLiked(value: Boolean) = apply {
+    val extras = build().extras ?: bundleOf()
+    extras.putBoolean(EXTRA_IS_LIKED, value)
+    setExtras(extras)
 }

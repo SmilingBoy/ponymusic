@@ -13,7 +13,7 @@ interface LikeSongProcessor {
 
     fun updateLikeSongList()
 
-    fun isLiked(id: Long): Boolean
+    fun isLiked(id: String): Boolean
 
-    suspend fun like(activity: Activity, id: Long): CommonResult<Unit>
+    suspend fun like(activity: Activity, id: String): CommonResult<Unit>
 }

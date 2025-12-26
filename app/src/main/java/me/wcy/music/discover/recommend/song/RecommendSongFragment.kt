@@ -2,6 +2,9 @@ package me.wcy.music.discover.recommend.song
 
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import com.blankj.utilcode.util.CacheDiskStaticUtils
+import com.blankj.utilcode.util.CacheDiskUtils
+import com.blankj.utilcode.util.TimeUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import me.wcy.music.R
@@ -94,12 +97,19 @@ class RecommendSongFragment : BaseMusicFragment() {
     }
 
     private fun loadData() {
+        var seedTime = CacheDiskStaticUtils.getString("recommend_song_seed", "0").toLong()
+
+        if (!TimeUtils.isToday(seedTime)){
+            seedTime = System.currentTimeMillis()
+            CacheDiskStaticUtils.put("recommend_song_seed", seedTime.toString())
+        }
+
         lifecycleScope.launch {
             showLoadSirLoading()
             val res = kotlin.runCatching {
                 DiscoverApi.get()
                     .getSongList(
-                        seed = System.currentTimeMillis().toString(),
+                        seed = seedTime.toString(),
                         sort = "random",
                         start = 0,
                         end = 30

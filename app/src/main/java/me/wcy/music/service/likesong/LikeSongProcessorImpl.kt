@@ -5,10 +5,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import me.wcy.music.account.AccountPreference
 import me.wcy.music.account.service.UserService
 import me.wcy.music.mine.MineApi
 import top.wangchenyan.common.model.CommonResult
-import top.wangchenyan.common.net.apiCall
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,7 +19,7 @@ import javax.inject.Singleton
 class LikeSongProcessorImpl @Inject constructor(
     private val userService: UserService
 ) : LikeSongProcessor, CoroutineScope by MainScope() {
-    private val likeSongSet = mutableSetOf<Long>()
+    private val likeSongSet = mutableSetOf<String>()
 
     override fun init() {
         launch {
@@ -36,52 +36,63 @@ class LikeSongProcessorImpl @Inject constructor(
     override fun updateLikeSongList() {
         if (userService.isLogin().not()) return
         launch {
-            //todo 兼容注释
-//            val res = runCatching {
-//                MineApi.get().getMyLikeSongList(userService.getUserId())
-//            }
-//            val data = res.getOrNull()
-//            if (data?.code == 200) {
-//                likeSongSet.clear()
-//                likeSongSet.addAll(data.ids)
-//            }
+            val res = kotlin.runCatching {
+                MineApi.get().getCollectSongList(userService.getUserId())
+            }
+            val data = res.getOrNull()
+            if (data != null) {
+                likeSongSet.clear()
+                likeSongSet.addAll(data.map { it.id })
+            }
         }
     }
 
-    override fun isLiked(id: Long): Boolean {
+    override fun isLiked(id: String): Boolean {
         if (userService.isLogin().not()) {
             return false
         }
         return likeSongSet.contains(id)
     }
 
-    override suspend fun like(activity: Activity, id: Long): CommonResult<Unit> {
+    override suspend fun like(activity: Activity, id: String): CommonResult<Unit> {
         if (userService.isLogin().not()) {
             userService.checkLogin(activity)
             return CommonResult.fail()
         }
+
+        val navidromeLogin = AccountPreference.navidromeLogin ?: return CommonResult.fail()
         val isLike = isLiked(id)
-        if (isLike) {
-            val res = apiCall {
-                MineApi.get().likeSong(id, false)
+        if (!isLike) {
+            val res = kotlin.runCatching {
+                MineApi.get().addCollect(
+                    username = navidromeLogin.username,
+                    salt = navidromeLogin.subsonicSalt,
+                    saltToken = navidromeLogin.subsonicToken,
+                    id = id
+                )
             }
-            return if (res.isSuccess()) {
-                likeSongSet.remove(id)
-                updateLikeSongList()
-                CommonResult.success(Unit)
-            } else {
-                CommonResult.fail(res.code, res.msg)
-            }
-        } else {
-            val res = apiCall {
-                MineApi.get().likeSong(id, true)
-            }
-            return if (res.isSuccess()) {
+            return if (res.isSuccess) {
                 likeSongSet.add(id)
                 updateLikeSongList()
                 CommonResult.success(Unit)
             } else {
-                CommonResult.fail(res.code, res.msg)
+                CommonResult.fail()
+            }
+        } else {
+            val res = kotlin.runCatching {
+                MineApi.get().removeCollect(
+                    username = navidromeLogin.username,
+                    salt = navidromeLogin.subsonicSalt,
+                    saltToken = navidromeLogin.subsonicToken,
+                    id = id
+                )
+            }
+            return if (res.isSuccess) {
+                likeSongSet.remove(id)
+                updateLikeSongList()
+                CommonResult.success(Unit)
+            } else {
+                CommonResult.fail()
             }
         }
     }

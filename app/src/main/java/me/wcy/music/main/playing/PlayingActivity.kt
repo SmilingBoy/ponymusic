@@ -51,6 +51,7 @@ import me.wcy.music.utils.getDuration
 import me.wcy.music.utils.getLargeCover
 import me.wcy.music.utils.getNmSongId
 import me.wcy.music.utils.getSongId
+import me.wcy.music.utils.isLiked
 import me.wcy.music.utils.isLocal
 import me.wcy.router.annotation.Route
 import top.wangchenyan.common.ext.toast
@@ -250,7 +251,10 @@ class PlayingActivity : BaseMusicActivity() {
                 // 获取当前播放歌曲
                 val song = playerController.currentSong.value ?: return@launch
                 // 执行喜欢/取消喜欢操作
-                val res = likeSongProcessor.like(this@PlayingActivity, song.getSongId())
+                val res = likeSongProcessor.like(
+                    this@PlayingActivity,
+                    song.getNmSongId()
+                )
                 if (res.isSuccess()) {
                     // 更新操作按钮状态
                     updateOnlineActionsState(song)
@@ -572,7 +576,7 @@ class PlayingActivity : BaseMusicActivity() {
                         throw IllegalStateException("lrc is invalid")
                     }
                     val parseLrc = LrcUtil.parseLrc(lrc)
-                    if (parseLrc.isEmpty()){
+                    if (parseLrc.isEmpty()) {
                         throw IllegalStateException("parseLrc is invalid")
                     }
                     parseLrc
@@ -676,7 +680,7 @@ class PlayingActivity : BaseMusicActivity() {
         // 只有在线歌曲才显示操作按钮
         viewBinding.controlLayout.llActions.isVisible = song.isLocal().not()
         // 更新喜欢按钮状态
-        viewBinding.controlLayout.ivLike.isSelected = likeSongProcessor.isLiked(song.getSongId())
+        viewBinding.controlLayout.ivLike.isSelected = likeSongProcessor.isLiked(song.getNmSongId())
     }
 
     /**
