@@ -14,9 +14,9 @@
     <color name="grey_800">#424242</color>
     <color name="grey_900">#212121</color>
     <color name="grey_900_p96">#F5212121</color>
-    <color name="ic_launcher_background">@color/red_500</color>
+    <color name="ic_launcher_bg">#05AEF0</color>
 
-    <color name="common_theme_color" tools:override="true">@color/red_500</color>
+    <color name="common_theme_color" tools:override="true">#05AEF0</color>
     <color name="common_background_color" tools:override="true">#FAFAFA</color>
     <color name="common_title_bar_color" tools:override="true">@color/common_theme_color</color>
     <color name="common_dialog_background_color" tools:override="true">@color/white</color>
