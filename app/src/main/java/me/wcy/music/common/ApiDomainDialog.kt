@@ -28,21 +28,8 @@ class ApiDomainDialog(private val context: Context) {
 
     fun show() {
         CenterDialogBuilder(context)
-            .title("请输入云音乐API域名")
+            .title("请输入音乐API域名")
             .contentViewBinding { dialog: CenterDialog, viewBinding: DialogApiDomainBinding ->
-                viewBinding.tvDoc.setLink()
-                viewBinding.tvDoc.text = buildSpannedString {
-                    append("点击查看")
-                    appendStyle(
-                        "云音乐API文档",
-                        color = context.getColorEx(R.color.common_theme_color)
-                    ) {
-                        LaunchUtils.launchBrowser(
-                            context,
-                            "https://binaryify.github.io/NeteaseCloudMusicApi"
-                        )
-                    }
-                }
                 if (ConfigPreferences.apiDomain.isNotEmpty()) {
                     viewBinding.etInput.hint = ConfigPreferences.apiDomain
                 }
@@ -82,7 +69,7 @@ class ApiDomainDialog(private val context: Context) {
     companion object {
         fun checkApiDomain(context: Context): Boolean {
             return if (ConfigPreferences.apiDomain.isEmpty()) {
-                context.showConfirmDialog("请先设置云音乐API域名") {
+                context.showConfirmDialog("请先设置音乐API域名") {
                     ApiDomainDialog(context).show()
                 }
                 false

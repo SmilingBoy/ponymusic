@@ -83,7 +83,7 @@ class DiscoverFragment : BaseMusicFragment() {
         super.onLazyCreate()
 
         initTitle()
-        initBanner()
+//        initBanner()
         initTopButton()
         initRecommendPlaylist()
         initRankingList()
@@ -157,17 +157,24 @@ class DiscoverFragment : BaseMusicFragment() {
     }
 
     private fun initTopButton() {
+        //每日推荐
         viewBinding.btnRecommendSong.setOnClickListener {
             CRouter.with(requireActivity()).url(RoutePath.RECOMMEND_SONG).start()
         }
+
+        // 专辑列表
         viewBinding.btnPrivateFm.setOnClickListener {
             toast("敬请期待")
         }
+
+        // 歌曲列表
         viewBinding.btnRecommendPlaylist.setOnClickListener {
             CRouter.with(requireActivity())
-                .url(RoutePath.PLAYLIST_SQUARE)
+                .url(RoutePath.RECOMMEND_PLAYLIST)
                 .start()
         }
+
+        // 歌手列表
         viewBinding.btnRank.setOnClickListener {
             CRouter.with(requireActivity()).url(RoutePath.RANKING).start()
         }
@@ -271,7 +278,7 @@ class DiscoverFragment : BaseMusicFragment() {
         if (ConfigPreferences.apiDomain.isNotEmpty()) {
             showLoadSirSuccess()
         } else {
-            showLoadSirError("请先设置云音乐API域名")
+            showLoadSirError("请先设置音乐API域名")
             if (isReload) {
                 ApiDomainDialog.checkApiDomain(requireContext())
             }

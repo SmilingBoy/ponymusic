@@ -43,7 +43,7 @@ class DiscoverViewModel @Inject constructor(
                 }
             }
         }
-        loadBanner()
+//        loadBanner()
         loadRankingList()
     }
 

@@ -114,7 +114,7 @@ class RecommendSongFragment : BaseMusicFragment() {
                         seed = seedTime.toString(),
                         sort = "random",
                         start = 0,
-                        end = 30
+                        end = 50
                     )
             }
             if (res.isSuccess) {

@@ -27,7 +27,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="128dp"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="8dp"
+                android:visibility="gone">
 
                 <com.youth.banner.Banner
                     android:id="@+id/banner"
@@ -69,30 +70,31 @@
                     app:drawableTopCompat="@drawable/ic_recommend" />
 
                 <TextView
-                    android:id="@+id/btnPrivateFm"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawablePadding="2dp"
-                    android:gravity="center_horizontal"
-                    android:text="私人漫游"
-                    android:textColor="@color/common_text_h1_color"
-                    android:textSize="12dp"
-                    app:drawableTint="@color/common_theme_color"
-                    app:drawableTopCompat="@drawable/ic_radio" />
-
-                <TextView
                     android:id="@+id/btnRecommendPlaylist"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:drawablePadding="2dp"
                     android:gravity="center_horizontal"
-                    android:text="歌单"
+                    android:text="歌曲"
                     android:textColor="@color/common_text_h1_color"
                     android:textSize="12dp"
                     app:drawableTint="@color/common_theme_color"
                     app:drawableTopCompat="@drawable/ic_discovery_playlist" />
+
+                <TextView
+                    android:id="@+id/btnPrivateFm"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawablePadding="2dp"
+                    android:gravity="center_horizontal"
+                    android:text="专辑"
+                    android:textColor="@color/common_text_h1_color"
+                    android:textSize="12dp"
+                    app:drawableTint="@color/common_theme_color"
+                    app:drawableTopCompat="@drawable/ic_radio" />
+
 
                 <TextView
                     android:id="@+id/btnRank"
@@ -101,7 +103,7 @@
                     android:layout_weight="1"
                     android:drawablePadding="2dp"
                     android:gravity="center_horizontal"
-                    android:text="排行榜"
+                    android:text="歌手"
                     android:textColor="@color/common_text_h1_color"
                     android:textSize="12dp"
                     app:drawableTint="@color/common_theme_color"
