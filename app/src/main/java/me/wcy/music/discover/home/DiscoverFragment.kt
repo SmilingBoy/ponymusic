@@ -177,7 +177,7 @@ class DiscoverFragment : BaseMusicFragment() {
 
         // 歌手列表
         viewBinding.btnRank.setOnClickListener {
-            CRouter.with(requireActivity()).url(RoutePath.RANKING).start()
+            CRouter.with(requireActivity()).url(RoutePath.ARTIST_LIST).start()
         }
     }
 

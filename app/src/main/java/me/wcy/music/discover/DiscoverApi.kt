@@ -5,6 +5,7 @@ import kotlinx.coroutines.withContext
 import me.wcy.music.common.bean.LrcDataWrap
 import me.wcy.music.common.bean.SongData
 import me.wcy.music.common.bean.SongUrlData
+import me.wcy.music.discover.artist.bean.NmArtistData
 import me.wcy.music.discover.banner.BannerListData
 import me.wcy.music.discover.playlist.detail.bean.NmAlbumData
 import me.wcy.music.discover.playlist.detail.bean.NmSongData
@@ -148,6 +149,19 @@ interface DiscoverApi {
         @Query("submission") submission: Boolean,
         @Query("time") time: Long? = null
     ): Any
+
+    //http://127.0.0.1:9003/api/artist?_end=30&_order=ASC&_sort=name&_start=15
+
+    /**
+     * 歌手列表
+     */
+    @GET("api/artist")
+    suspend fun getArtistList(
+        @Query("_start") start: Int = 0,
+        @Query("_end") end: Int = 30,
+        @Query("_order") order: String = "ASC",
+        @Query("_sort") sort: String = "name",
+    ): List<NmArtistData>
 
     companion object {
         private const val SONG_LIST_LIMIT = 800
