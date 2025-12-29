@@ -119,7 +119,7 @@ interface DiscoverApi {
     ): List<NmSongData>
 
     /**
-     * 歌曲列表
+     * 专辑列表
      */
     @GET("api/album")
     suspend fun getAlbumList(

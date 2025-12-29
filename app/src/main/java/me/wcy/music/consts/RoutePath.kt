@@ -17,4 +17,5 @@ object RoutePath {
     const val RANKING = "/ranking"
     const val COLLECT_SONG_LIST = "/collect/song/list"
     const val RECOMMEND_PLAYLIST = "/playlist/recommend"
+    const val ALBUM_LIST = "/album/list"
 }

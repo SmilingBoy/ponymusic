@@ -35,7 +35,6 @@ import me.wcy.music.utils.toMediaItem
 import me.wcy.radapter3.RAdapter
 import me.wcy.router.CRouter
 import top.wangchenyan.common.ext.load
-import top.wangchenyan.common.ext.toast
 import top.wangchenyan.common.ext.viewBindings
 import top.wangchenyan.common.utils.LaunchUtils
 import top.wangchenyan.common.widget.decoration.SpacingDecoration
@@ -164,7 +163,9 @@ class DiscoverFragment : BaseMusicFragment() {
 
         // 专辑列表
         viewBinding.btnPrivateFm.setOnClickListener {
-            toast("敬请期待")
+            CRouter.with(requireActivity())
+                .url(RoutePath.ALBUM_LIST)
+                .start()
         }
 
         // 歌曲列表
