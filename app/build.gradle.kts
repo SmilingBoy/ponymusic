@@ -20,7 +20,7 @@ android {
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "me.wcy.music"
+        applicationId = "com.boofb.music"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = libs.versions.versionCode.get().toInt()
@@ -38,7 +38,7 @@ android {
         applicationVariants.all {
             outputs.all {
                 if (this is com.android.build.gradle.internal.api.ApkVariantOutputImpl) {
-                    this.outputFileName = "ponymusic-$versionName.apk"
+                    this.outputFileName = "boofbmusic-$versionName.apk"
                 }
             }
         }
