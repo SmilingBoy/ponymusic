@@ -1,4 +1,4 @@
-package me.wcy.music.search.song
+package me.wcy.music.search.album
 
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -11,8 +11,10 @@ import me.wcy.music.common.dialog.songmenu.SongMoreMenuDialog
 import me.wcy.music.consts.Consts
 import me.wcy.music.consts.RoutePath
 import me.wcy.music.discover.DiscoverApi
-import me.wcy.music.discover.playlist.detail.bean.NmSongData
+import me.wcy.music.discover.artist.bean.NmArtistData
+import me.wcy.music.discover.playlist.detail.bean.NmAlbumData
 import me.wcy.music.search.SearchViewModel
+import me.wcy.music.search.song.SearchSongItemBinder
 import me.wcy.music.service.PlayerController
 import me.wcy.music.utils.toNmMediaItem
 import me.wcy.radapter3.RAdapter
@@ -24,26 +26,26 @@ import javax.inject.Inject
  * Created by wangchenyan.top on 2023/9/20.
  */
 @AndroidEntryPoint
-class SearchSongFragment : SimpleMusicRefreshFragment<NmSongData>() {
+class SearchAlbumFragment : SimpleMusicRefreshFragment<NmAlbumData>() {
     private val viewModel by activityViewModels<SearchViewModel>()
     private val itemBinder by lazy {
-        SearchSongItemBinder(object : OnItemClickListener2<NmSongData> {
-            override fun onItemClick(item: NmSongData, position: Int) {
-                playerController.addAndPlay(item.toNmMediaItem())
-                CRouter.with(context).url(RoutePath.PLAYING).start()
+        SearchAlbumItemBinder(object : OnItemClickListener2<NmAlbumData> {
+            override fun onItemClick(item: NmAlbumData, position: Int) {
+//                playerController.addAndPlay(item.toNmMediaItem())
+//                CRouter.with(context).url(RoutePath.PLAYING).start()
             }
 
-            override fun onMoreClick(item: NmSongData, position: Int) {
-                SongMoreMenuDialog(requireActivity(), item)
-                    .setItems(
-                        listOf(
+            override fun onMoreClick(item: NmAlbumData, position: Int) {
+//                SongMoreMenuDialog(requireActivity(), item)
+//                    .setItems(
+//                        listOf(
 //                            CollectMenuItem(lifecycleScope, item),
 //                            CommentMenuItem(item),
 //                            ArtistMenuItem(item),
 //                            AlbumMenuItem(item)
-                        )
-                    )
-                    .show()
+//                        )
+//                    )
+//                    .show()
             }
         }).apply {
             keywords = viewModel.keywords.value
@@ -74,28 +76,28 @@ class SearchSongFragment : SimpleMusicRefreshFragment<NmSongData>() {
         }
     }
 
-    override fun initAdapter(adapter: RAdapter<NmSongData>) {
+    override fun initAdapter(adapter: RAdapter<NmAlbumData>) {
         adapter.register(itemBinder)
     }
 
-    override suspend fun getData(page: Int): CommonResult<List<NmSongData>> {
+    override suspend fun getData(page: Int): CommonResult<List<NmAlbumData>> {
         val keywords = viewModel.keywords.value
         if (keywords.isEmpty()) {
-            return CommonResult.success(emptyList())
+            return CommonResult.Companion.success(emptyList())
         }
         //1, keywords, "title", (page - 1) * Consts.PAGE_COUNT
-        val res = kotlin.runCatching {
-            DiscoverApi.get().getSongList(
+        val res = runCatching {
+            DiscoverApi.Companion.get().getAlbumList(
                 start = (page - 1) * Consts.PAGE_COUNT,
                 end = page * Consts.PAGE_COUNT,
-                title = keywords,
-                sort = "title",
+                name = keywords,
+                sort = "name",
             )
         }
         return if (res.isSuccess) {
-            CommonResult.success(res.getOrThrow())
+            CommonResult.Companion.success(res.getOrThrow())
         } else {
-            CommonResult.fail()
+            CommonResult.Companion.fail()
         }
     }
 }

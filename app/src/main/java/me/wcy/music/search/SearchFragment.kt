@@ -17,6 +17,8 @@ import me.wcy.music.consts.RoutePath
 import me.wcy.music.databinding.FragmentSearchBinding
 import me.wcy.music.databinding.ItemSearchHistoryBinding
 import me.wcy.music.databinding.TitleSearchBinding
+import me.wcy.music.search.album.SearchAlbumFragment
+import me.wcy.music.search.artist.SearchArtistFragment
 import me.wcy.music.search.playlist.SearchPlaylistFragment
 import me.wcy.music.search.song.SearchSongFragment
 import me.wcy.router.annotation.Route
@@ -93,7 +95,8 @@ class SearchFragment : BaseMusicFragment() {
             viewBinding.tabLayout
         )
         pager.addFragment(SearchSongFragment(), "单曲")
-        pager.addFragment(SearchPlaylistFragment(), "歌单")
+        pager.addFragment(SearchAlbumFragment(), "专辑")
+        pager.addFragment(SearchArtistFragment(), "歌手")
         pager.setup()
     }
 

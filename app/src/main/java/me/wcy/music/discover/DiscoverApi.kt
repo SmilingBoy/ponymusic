@@ -117,6 +117,7 @@ interface DiscoverApi {
         @Query("_start") start: Int = 0,
         @Query("seed") seed: String = "",
         @Query("album_id") albumId: String = "",
+        @Query("title") title: String = "",
     ): List<NmSongData>
 
     /**
@@ -129,6 +130,7 @@ interface DiscoverApi {
         @Query("_sort") sort: String = "random",
         @Query("_start") start: Int = 0,
         @Query("seed") seed: String = "",
+        @Query("name") name: String = "",
     ): List<NmAlbumData>
 
     /**
@@ -161,6 +163,7 @@ interface DiscoverApi {
         @Query("_end") end: Int = 30,
         @Query("_order") order: String = "ASC",
         @Query("_sort") sort: String = "name",
+        @Query("name") name: String = "name",
     ): List<NmArtistData>
 
     companion object {

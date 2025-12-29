@@ -9,7 +9,7 @@
     android:drawablePadding="6dp"
     android:gravity="center_vertical"
     android:paddingHorizontal="10dp"
-    android:text="歌曲/歌手/专辑/歌单/用户"
+    android:text="歌曲/歌手/专辑"
     android:textColor="@color/common_text_h2_color"
     android:textSize="14dp"
     app:drawableStartCompat="@drawable/ic_menu_search"

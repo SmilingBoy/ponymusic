@@ -38,6 +38,15 @@ interface SearchApi {
         @Query("offset") offset: Int,
     ): NetResult<SearchResultData>
 
+
+    /**
+     * ==============================NativeApi==============================
+     */
+
+    //http://127.0.0.1:9003/api/song?_end=15&_order=ASC&_sort=title&_start=0&title=%E7%88%B1%E6%83%85
+    //http://127.0.0.1:9003/api/artist?_end=15&_order=ASC&_sort=name&_start=0&name=%E6%99%BA%E6%85%A7
+    //http://127.0.0.1:9003/api/album?_end=18&_order=ASC&_sort=name&_start=0&name=%E6%B2%A1%E6%9C%89&seed=0.3406203128658801-9
+
     companion object {
         private val api: SearchApi by lazy {
             val retrofit = Retrofit.Builder()
