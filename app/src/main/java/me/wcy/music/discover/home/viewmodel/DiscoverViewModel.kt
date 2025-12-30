@@ -13,6 +13,7 @@ import me.wcy.music.account.service.UserService
 import me.wcy.music.common.bean.PlaylistData
 import me.wcy.music.discover.DiscoverApi
 import me.wcy.music.discover.banner.BannerData
+import me.wcy.music.discover.playlist.detail.bean.NmSongData
 import me.wcy.music.net.NetCache
 import me.wcy.music.storage.preference.ConfigPreferences
 import top.wangchenyan.common.ext.toUnMutable
@@ -28,8 +29,8 @@ class DiscoverViewModel @Inject constructor(
     private val _bannerList = MutableStateFlow<List<BannerData>>(emptyList())
     val bannerList = _bannerList.toUnMutable()
 
-    private val _recommendPlaylist = MutableStateFlow<List<PlaylistData>>(emptyList())
-    val recommendPlaylist = _recommendPlaylist.toUnMutable()
+    private val _songHistoryList = MutableStateFlow<List<NmSongData>>(emptyList())
+    val songHistoryList = _songHistoryList.toUnMutable()
 
     private val _rankingList = MutableLiveData<List<PlaylistData>>(emptyList())
     val rankingList = _rankingList.toUnMutable()
@@ -37,9 +38,9 @@ class DiscoverViewModel @Inject constructor(
     init {
         loadCache()
         viewModelScope.launch {
-            userService.profile.collectLatest { profile ->
+            userService.navidromeProfile.collectLatest { profile ->
                 if (profile != null && ConfigPreferences.apiDomain.isNotEmpty()) {
-                    loadRecommendPlaylist()
+                    loadSongHistoryList()
                 }
             }
         }
@@ -56,10 +57,10 @@ class DiscoverViewModel @Inject constructor(
         if (userService.isLogin()) {
             viewModelScope.launch {
                 val list = NetCache.userCache.getJsonArray(
-                    CACHE_KEY_REC_PLAYLIST,
-                    PlaylistData::class.java
+                    CACHE_KEY_SONG_HISTORY_LIST,
+                    NmSongData::class.java
                 ) ?: return@launch
-                _recommendPlaylist.value = list
+                _songHistoryList.value = list
             }
         }
         viewModelScope.launch {
@@ -82,13 +83,18 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    private fun loadRecommendPlaylist() {
+    private fun loadSongHistoryList() {
         viewModelScope.launch {
             kotlin.runCatching {
-                DiscoverApi.get().getRecommendPlaylists()
+                DiscoverApi.get().getSongList(
+                    start = 0,
+                    end = 20,
+                    sort = "play_date",
+                    order = "DESC",
+                )
             }.onSuccess {
-                _recommendPlaylist.value = it.playlists
-                NetCache.userCache.putJson(CACHE_KEY_REC_PLAYLIST, it.playlists)
+                _songHistoryList.value = it
+                NetCache.userCache.putJson(CACHE_KEY_SONG_HISTORY_LIST, it)
             }.onFailure {
             }
         }
@@ -126,5 +132,7 @@ class DiscoverViewModel @Inject constructor(
         const val CACHE_KEY_BANNER = "discover_banner"
         const val CACHE_KEY_REC_PLAYLIST = "discover_recommend_playlist"
         const val CACHE_KEY_RANKING_LIST = "discover_ranking_list"
+
+        const val CACHE_KEY_SONG_HISTORY_LIST = "song_history_list"
     }
 }

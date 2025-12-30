@@ -111,12 +111,12 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/tvRecommendPlaylist"
+                android:id="@+id/tvSongHistory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
-                android:text="推荐歌单"
+                android:text="最近播放"
                 android:textColor="@color/common_text_h1_color"
                 android:textSize="17dp"
                 android:textStyle="bold"
@@ -124,7 +124,7 @@
                 app:drawableTint="@color/common_text_h1_color" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvRecommendPlaylist"
+                android:id="@+id/rvSongHostoryList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"

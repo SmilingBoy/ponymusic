@@ -57,7 +57,7 @@ data class NmSongData(
     @SerializedName("path")
     var path: String = "",
     @SerializedName("playCount")
-    var playCount: Int = 0,
+    var playCount: Long = 0,
     @SerializedName("playDate")
     var playDate: Any? = Any(),
     @SerializedName("rating")

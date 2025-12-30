@@ -166,6 +166,8 @@ interface DiscoverApi {
         @Query("name") name: String = "name",
     ): List<NmArtistData>
 
+    //http://127.0.0.1:9003/api/album?_end=18&_order=DESC&_sort=play_date&_start=0&recently_played=true&seed=0.3406203128658801-12
+
     companion object {
         private const val SONG_LIST_LIMIT = 800
 

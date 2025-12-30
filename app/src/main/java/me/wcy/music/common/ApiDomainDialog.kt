@@ -31,7 +31,7 @@ class ApiDomainDialog(private val context: Context) {
             .title("请输入音乐API域名")
             .contentViewBinding { dialog: CenterDialog, viewBinding: DialogApiDomainBinding ->
                 if (ConfigPreferences.apiDomain.isNotEmpty()) {
-                    viewBinding.etInput.hint = ConfigPreferences.apiDomain
+                    viewBinding.etInput.setText(ConfigPreferences.apiDomain)
                 }
             }
             .buttonText(

@@ -21,13 +21,22 @@ import top.wangchenyan.common.ext.viewBindings
 /**
  * 歌曲列表
  */
-@Route(RoutePath.RECOMMEND_PLAYLIST)
+@Route(RoutePath.SONG_LIST)
 @AndroidEntryPoint
 class SongListFragment : BaseMusicFragment() {
+
+    companion object {
+        const val SHOW_TYPE_KEY = "showType"
+        const val SHOW_TYPE_ALL = 0
+        const val SHOW_TYPE_HISTORY = 1
+    }
+
     private val viewBinding by viewBindings<FragmentSonglistBinding>()
     private val viewModel by viewModels<SongListViewModel>()
     private val adapter by lazy { RAdapter<NmSongData>() }
     private var page = 1
+
+    private var showType = SHOW_TYPE_ALL
 
     override fun getRootView(): View {
         return viewBinding.root
@@ -48,6 +57,8 @@ class SongListFragment : BaseMusicFragment() {
 
     override fun onLazyCreate() {
         super.onLazyCreate()
+
+        showType = getRouteArguments().getIntExtra(SHOW_TYPE_KEY, SHOW_TYPE_ALL)
 
         initTitle()
         initView()
@@ -88,7 +99,7 @@ class SongListFragment : BaseMusicFragment() {
             showLoadSirLoading()
         }
         lifecycleScope.launch {
-            val result = viewModel.loadSongs(page)
+            val result = viewModel.loadSongs(page, showType)
             if (result.isSuccess()) {
                 if (page == 1) {
                     showLoadSirSuccess()

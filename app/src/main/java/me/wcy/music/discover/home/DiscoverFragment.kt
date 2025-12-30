@@ -26,12 +26,15 @@ import me.wcy.music.databinding.FragmentDiscoverBinding
 import me.wcy.music.discover.DiscoverApi
 import me.wcy.music.discover.banner.BannerData
 import me.wcy.music.discover.home.viewmodel.DiscoverViewModel
-import me.wcy.music.discover.playlist.square.item.PlaylistItemBinder
+import me.wcy.music.discover.playlist.detail.bean.NmSongData
+import me.wcy.music.discover.playlist.songlist.SongListFragment
+import me.wcy.music.discover.playlist.songlist.item.SongVlistItemBinder
 import me.wcy.music.discover.ranking.discover.item.DiscoverRankingItemBinder
 import me.wcy.music.main.MainActivity
 import me.wcy.music.service.PlayerController
 import me.wcy.music.storage.preference.ConfigPreferences
 import me.wcy.music.utils.toMediaItem
+import me.wcy.music.utils.toNmMediaItem
 import me.wcy.radapter3.RAdapter
 import me.wcy.router.CRouter
 import top.wangchenyan.common.ext.load
@@ -48,8 +51,8 @@ class DiscoverFragment : BaseMusicFragment() {
     private val viewBinding by viewBindings<FragmentDiscoverBinding>()
     private val viewModel by viewModels<DiscoverViewModel>()
 
-    private val recommendPlaylistAdapter by lazy {
-        RAdapter<PlaylistData>()
+    private val songHistoryListAdapter by lazy {
+        RAdapter<NmSongData>()
     }
     private val rankingListAdapter by lazy {
         RAdapter<PlaylistData>()
@@ -171,7 +174,7 @@ class DiscoverFragment : BaseMusicFragment() {
         // 歌曲列表
         viewBinding.btnRecommendPlaylist.setOnClickListener {
             CRouter.with(requireActivity())
-                .url(RoutePath.RECOMMEND_PLAYLIST)
+                .url(RoutePath.SONG_LIST)
                 .start()
         }
 
@@ -182,40 +185,38 @@ class DiscoverFragment : BaseMusicFragment() {
     }
 
     private fun initRecommendPlaylist() {
-        viewBinding.tvRecommendPlaylist.setOnClickListener {
+        viewBinding.tvSongHistory.setOnClickListener {
             CRouter.with(requireActivity())
-                .url(RoutePath.PLAYLIST_SQUARE)
+                .url(RoutePath.SONG_LIST)
+                .extra(SongListFragment.SHOW_TYPE_KEY, SongListFragment.SHOW_TYPE_HISTORY)
                 .start()
         }
         val itemWidth = ((ScreenUtils.getAppScreenWidth() - SizeUtils.dp2px(20f)) / 3)
             .coerceAtMost(resources.getDimensionPixelSize(R.dimen.playlist_item_max_width))
-        recommendPlaylistAdapter.register(PlaylistItemBinder(itemWidth, true, object :
-            PlaylistItemBinder.OnItemClickListener {
-            override fun onItemClick(item: PlaylistData) {
-                CRouter.with(requireActivity())
-                    .url(RoutePath.PLAYLIST_DETAIL)
-                    .extra("id", item.id)
-                    .start()
+        songHistoryListAdapter.register(SongVlistItemBinder(itemWidth, true, object :
+            SongVlistItemBinder.OnItemClickListener {
+            override fun onItemClick(item: NmSongData) {
+                playerController.addAndPlay(item.toNmMediaItem())
             }
 
-            override fun onPlayClick(item: PlaylistData) {
-                playPlaylist(item, 0)
+            override fun onPlayClick(item: NmSongData) {
+                playerController.addAndPlay(item.toNmMediaItem())
             }
         }))
-        viewBinding.rvRecommendPlaylist.adapter = recommendPlaylistAdapter
-        viewBinding.rvRecommendPlaylist.layoutManager =
+        viewBinding.rvSongHostoryList.adapter = songHistoryListAdapter
+        viewBinding.rvSongHostoryList.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        viewBinding.rvRecommendPlaylist.addItemDecoration(
+        viewBinding.rvSongHostoryList.addItemDecoration(
             SpacingDecoration(SizeUtils.dp2px(10f))
         )
 
         val updateVisibility = {
-            if (userService.isLogin() && viewModel.recommendPlaylist.value.isNotEmpty()) {
-                viewBinding.tvRecommendPlaylist.isVisible = true
-                viewBinding.rvRecommendPlaylist.isVisible = true
+            if (userService.isLogin() && viewModel.songHistoryList.value.isNotEmpty()) {
+                viewBinding.tvSongHistory.isVisible = true
+                viewBinding.rvSongHostoryList.isVisible = true
             } else {
-                viewBinding.tvRecommendPlaylist.isVisible = false
-                viewBinding.rvRecommendPlaylist.isVisible = false
+                viewBinding.tvSongHistory.isVisible = false
+                viewBinding.rvSongHostoryList.isVisible = false
             }
         }
 
@@ -226,9 +227,9 @@ class DiscoverFragment : BaseMusicFragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.recommendPlaylist.collectLatest { recommendPlaylist ->
+            viewModel.songHistoryList.collectLatest { songList ->
                 updateVisibility()
-                recommendPlaylistAdapter.refresh(recommendPlaylist)
+                songHistoryListAdapter.refresh(songList)
             }
         }
     }
