@@ -29,6 +29,7 @@ class SongListFragment : BaseMusicFragment() {
         const val SHOW_TYPE_KEY = "showType"
         const val SHOW_TYPE_ALL = 0
         const val SHOW_TYPE_HISTORY = 1
+        const val SHOW_TYPE_MOST_PLAYED = 2
     }
 
     private val viewBinding by viewBindings<FragmentSonglistBinding>()

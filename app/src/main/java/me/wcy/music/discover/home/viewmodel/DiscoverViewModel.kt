@@ -32,6 +32,9 @@ class DiscoverViewModel @Inject constructor(
     private val _songHistoryList = MutableStateFlow<List<NmSongData>>(emptyList())
     val songHistoryList = _songHistoryList.toUnMutable()
 
+    private val _mostPlayedList = MutableStateFlow<List<NmSongData>>(emptyList())
+    val mostPlayedList = _mostPlayedList.toUnMutable()
+
     private val _rankingList = MutableLiveData<List<PlaylistData>>(emptyList())
     val rankingList = _rankingList.toUnMutable()
 
@@ -41,6 +44,7 @@ class DiscoverViewModel @Inject constructor(
             userService.navidromeProfile.collectLatest { profile ->
                 if (profile != null && ConfigPreferences.apiDomain.isNotEmpty()) {
                     loadSongHistoryList()
+                    loadMostPlayedList()
                 }
             }
         }
@@ -61,6 +65,13 @@ class DiscoverViewModel @Inject constructor(
                     NmSongData::class.java
                 ) ?: return@launch
                 _songHistoryList.value = list
+            }
+            viewModelScope.launch {
+                val list = NetCache.userCache.getJsonArray(
+                    CACHE_KEY_MOST_PLAYED_LIST,
+                    NmSongData::class.java
+                ) ?: return@launch
+                _mostPlayedList.value = list
             }
         }
         viewModelScope.launch {
@@ -92,10 +103,27 @@ class DiscoverViewModel @Inject constructor(
                     sort = "play_date",
                     order = "DESC",
                 )
-            }.onSuccess {
+            }.onSuccess { 
                 _songHistoryList.value = it
                 NetCache.userCache.putJson(CACHE_KEY_SONG_HISTORY_LIST, it)
-            }.onFailure {
+            }.onFailure { 
+            }
+        }
+    }
+
+    private fun loadMostPlayedList() {
+        viewModelScope.launch {
+            kotlin.runCatching {
+                DiscoverApi.get().getSongList(
+                    start = 0,
+                    end = 20,
+                    sort = "play_count",
+                    order = "DESC",
+                )
+            }.onSuccess { 
+                _mostPlayedList.value = it
+                NetCache.userCache.putJson(CACHE_KEY_MOST_PLAYED_LIST, it)
+            }.onFailure { 
             }
         }
     }
@@ -134,5 +162,6 @@ class DiscoverViewModel @Inject constructor(
         const val CACHE_KEY_RANKING_LIST = "discover_ranking_list"
 
         const val CACHE_KEY_SONG_HISTORY_LIST = "song_history_list"
+        const val CACHE_KEY_MOST_PLAYED_LIST = "most_played_list"
     }
 }

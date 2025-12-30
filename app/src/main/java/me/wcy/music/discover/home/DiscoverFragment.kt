@@ -5,8 +5,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.SizeUtils
 import com.youth.banner.adapter.BannerImageAdapter
@@ -20,16 +18,13 @@ import me.wcy.music.R
 import me.wcy.music.account.service.UserService
 import me.wcy.music.common.ApiDomainDialog
 import me.wcy.music.common.BaseMusicFragment
-import me.wcy.music.common.bean.PlaylistData
 import me.wcy.music.consts.RoutePath
 import me.wcy.music.databinding.FragmentDiscoverBinding
-import me.wcy.music.discover.DiscoverApi
 import me.wcy.music.discover.banner.BannerData
 import me.wcy.music.discover.home.viewmodel.DiscoverViewModel
 import me.wcy.music.discover.playlist.detail.bean.NmSongData
 import me.wcy.music.discover.playlist.songlist.SongListFragment
 import me.wcy.music.discover.playlist.songlist.item.SongVlistItemBinder
-import me.wcy.music.discover.ranking.discover.item.DiscoverRankingItemBinder
 import me.wcy.music.main.MainActivity
 import me.wcy.music.service.PlayerController
 import me.wcy.music.storage.preference.ConfigPreferences
@@ -51,18 +46,19 @@ class DiscoverFragment : BaseMusicFragment() {
     private val viewBinding by viewBindings<FragmentDiscoverBinding>()
     private val viewModel by viewModels<DiscoverViewModel>()
 
-    private val songHistoryListAdapter by lazy {
-        RAdapter<NmSongData>()
-    }
-    private val rankingListAdapter by lazy {
-        RAdapter<PlaylistData>()
-    }
-
     @Inject
     lateinit var userService: UserService
 
     @Inject
     lateinit var playerController: PlayerController
+
+    private val songHistoryListAdapter by lazy {
+        RAdapter<NmSongData>()
+    }
+
+    private val mostPlayedListAdapter by lazy {
+        RAdapter<NmSongData>()
+    }
 
     override fun getRootView(): View {
         return viewBinding.root
@@ -87,8 +83,8 @@ class DiscoverFragment : BaseMusicFragment() {
         initTitle()
 //        initBanner()
         initTopButton()
-        initRecommendPlaylist()
-        initRankingList()
+        initSongHistoryList()
+        initMostPlayedList()
         checkApiDomain(false)
     }
 
@@ -184,7 +180,7 @@ class DiscoverFragment : BaseMusicFragment() {
         }
     }
 
-    private fun initRecommendPlaylist() {
+    private fun initSongHistoryList() {
         viewBinding.tvSongHistory.setOnClickListener {
             CRouter.with(requireActivity())
                 .url(RoutePath.SONG_LIST)
@@ -234,45 +230,53 @@ class DiscoverFragment : BaseMusicFragment() {
         }
     }
 
-    private fun initRankingList() {
-        viewBinding.tvRankingList.setOnClickListener {
+    private fun initMostPlayedList() {
+        viewBinding.tvMostPlayed.setOnClickListener {
             CRouter.with(requireActivity())
-                .url(RoutePath.RANKING)
+                .url(RoutePath.SONG_LIST)
+                .extra(SongListFragment.SHOW_TYPE_KEY, SongListFragment.SHOW_TYPE_MOST_PLAYED)
                 .start()
         }
-        rankingListAdapter.register(DiscoverRankingItemBinder(object :
-            DiscoverRankingItemBinder.OnItemClickListener {
-            override fun onItemClick(item: PlaylistData, position: Int) {
-                CRouter.with(requireActivity())
-                    .url(RoutePath.PLAYLIST_DETAIL)
-                    .extra("id", item.id)
-                    .start()
+        val itemWidth = ((ScreenUtils.getAppScreenWidth() - SizeUtils.dp2px(20f)) / 3)
+            .coerceAtMost(resources.getDimensionPixelSize(R.dimen.playlist_item_max_width))
+        mostPlayedListAdapter.register(SongVlistItemBinder(itemWidth, true, object :
+            SongVlistItemBinder.OnItemClickListener {
+            override fun onItemClick(item: NmSongData) {
+                playerController.addAndPlay(item.toNmMediaItem())
             }
 
-            override fun onSongClick(item: PlaylistData, songPosition: Int) {
-                playPlaylist(item, songPosition)
+            override fun onPlayClick(item: NmSongData) {
+                playerController.addAndPlay(item.toNmMediaItem())
             }
         }))
-        viewBinding.vpRankingList.apply {
-            val recyclerView = getChildAt(0) as RecyclerView
-            recyclerView.apply {
-                setPadding(SizeUtils.dp2px(16f), 0, SizeUtils.dp2px(16f), 0)
-                clipToPadding = false
+        viewBinding.rvMostPlayedList.adapter = mostPlayedListAdapter
+        viewBinding.rvMostPlayedList.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        viewBinding.rvMostPlayedList.addItemDecoration(
+            SpacingDecoration(SizeUtils.dp2px(10f))
+        )
+
+        val updateVisibility = {
+            if (userService.isLogin() && viewModel.mostPlayedList.value.isNotEmpty()) {
+                viewBinding.tvMostPlayed.isVisible = true
+                viewBinding.rvMostPlayedList.isVisible = true
+            } else {
+                viewBinding.tvMostPlayed.isVisible = false
+                viewBinding.rvMostPlayedList.isVisible = false
             }
-            orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            adapter = rankingListAdapter
         }
 
-        viewModel.rankingList.observe(this) { rankingList ->
-            rankingList ?: return@observe
-            if (viewModel.rankingList.value?.isNotEmpty() == true) {
-                viewBinding.tvRankingList.isVisible = true
-                viewBinding.vpRankingList.isVisible = true
-            } else {
-                viewBinding.tvRankingList.isVisible = false
-                viewBinding.vpRankingList.isVisible = false
+        lifecycleScope.launch {
+            userService.profile.collectLatest {
+                updateVisibility()
             }
-            rankingListAdapter.refresh(rankingList)
+        }
+
+        lifecycleScope.launch {
+            viewModel.mostPlayedList.collectLatest { songList ->
+                updateVisibility()
+                mostPlayedListAdapter.refresh(songList)
+            }
         }
     }
 
@@ -287,20 +291,4 @@ class DiscoverFragment : BaseMusicFragment() {
         }
     }
 
-    private fun playPlaylist(playlistData: PlaylistData, songPosition: Int) {
-        lifecycleScope.launch {
-            showLoading()
-            kotlin.runCatching {
-                DiscoverApi.getFullPlaylistSongList(playlistData.id)
-            }.onSuccess { songListData ->
-                dismissLoading()
-                if (songListData.code == 200 && songListData.songs.isNotEmpty()) {
-                    val songs = songListData.songs.map { it.toMediaItem() }
-                    playerController.replaceAll(songs, songs.getOrElse(songPosition) { songs[0] })
-                }
-            }.onFailure {
-                dismissLoading()
-            }
-        }
-    }
 }

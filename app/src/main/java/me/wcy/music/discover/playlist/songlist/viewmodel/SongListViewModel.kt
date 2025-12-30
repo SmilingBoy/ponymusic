@@ -36,6 +36,10 @@ class SongListViewModel @Inject constructor(
                 sort = "play_date"
                 order = "DESC"
             }
+            SongListFragment.SHOW_TYPE_MOST_PLAYED -> {
+                sort = "play_count"
+                order = "DESC"
+            }
         }
 
         return try {
