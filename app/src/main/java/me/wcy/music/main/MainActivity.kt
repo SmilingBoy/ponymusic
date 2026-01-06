@@ -22,6 +22,7 @@ import me.wcy.music.consts.RoutePath
 import me.wcy.music.databinding.ActivityMainBinding
 import me.wcy.music.databinding.NavigationHeaderBinding
 import me.wcy.music.databinding.TabItemBinding
+import me.wcy.music.main.playing.PlayingV2Activity
 import me.wcy.music.service.MusicService
 import me.wcy.music.service.PlayServiceModule
 import me.wcy.music.service.PlayServiceModule.playerController
@@ -94,6 +95,8 @@ class MainActivity : BaseMusicActivity() {
         configWindowInsets {
             navBarColor = getColorEx(R.color.tab_bg)
         }
+
+        startActivity(Intent(this, PlayingV2Activity::class.java))
     }
 
     /**

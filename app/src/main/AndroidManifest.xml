@@ -67,6 +67,8 @@
             android:name="me.wcy.music.main.playing.PlayingActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.Popup" />
+
+        <activity android:name=".main.playing.PlayingV2Activity" />
     </application>
 
 </manifest>
