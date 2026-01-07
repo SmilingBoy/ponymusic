@@ -28,4 +28,9 @@
     <color name="tab_bg">@color/white</color>
     <color name="card_bg">@color/white</color>
     <color name="play_bar_bg">@color/white</color>
+
+    <!-- 分割线-->
+
+    <color name="salt_color_icon_foreground">#050f19</color>
+
 </resources>
