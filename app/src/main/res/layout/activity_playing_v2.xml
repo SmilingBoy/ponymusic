@@ -18,67 +18,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/transparent" />
+
         <!-- 2. 左侧菜单（必须是第二个子视图，设置layout_gravity="start"） -->
-        <LinearLayout
-            android:id="@+id/menuLayout"
+        <include
+            android:id="@+id/left_menu"
+            layout="@layout/menu_left_drawer"
             android:layout_width="240dp"
             android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:background="@color/white"
-            android:orientation="vertical">
-
-            <!-- 菜单标题 -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:gravity="center"
-                android:text="菜单"
-                android:textColor="@color/common_text_h1_color"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <!-- 菜单分隔线 -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/common_divider" />
-
-            <!-- 菜单项1 -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:text="首页"
-                android:textColor="@color/common_text_h1_color"
-                android:textSize="16sp" />
-
-            <!-- 菜单项2 -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:text="发现"
-                android:textColor="@color/common_text_h1_color"
-                android:textSize="16sp" />
-
-            <!-- 菜单项3 -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:text="我的"
-                android:textColor="@color/common_text_h1_color"
-                android:textSize="16sp" />
-
-            <!-- 菜单项4 -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:text="设置"
-                android:textColor="@color/common_text_h1_color"
-                android:textSize="16sp" />
-        </LinearLayout>
+            android:layout_gravity="start" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
 

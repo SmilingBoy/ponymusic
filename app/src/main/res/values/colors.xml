@@ -5,6 +5,10 @@
     <color name="red_500_p30">#4CF44336</color>
     <color name="white_p96">#F5FFFFFF</color>
     <color name="blue">#2196F3</color>
+    <color name="green">#4CAF50</color>
+    <color name="red">#F44336</color>
+    <color name="yellow">#FFC107</color>
+    <color name="purple">#9C27B0</color>
     <color name="grey">#9E9E9E</color>
     <color name="grey_p50">#809E9E9E</color>
     <color name="grey_100">#E5E5E5</color>

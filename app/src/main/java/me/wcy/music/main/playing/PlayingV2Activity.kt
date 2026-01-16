@@ -2,8 +2,6 @@ package me.wcy.music.main.playing
 
 import android.os.Bundle
 import android.view.View
-import androidx.drawerlayout.widget.DrawerLayout
-import com.blankj.utilcode.util.SizeUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import me.wcy.music.common.BaseMusicActivity
@@ -18,6 +16,9 @@ class PlayingV2Activity : BaseMusicActivity() {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
         val behavior = BottomSheetBehavior.from(viewBinding.layoutB)
+
+        // 默认展开左侧菜单
+        viewBinding.layoutA.openDrawer(viewBinding.leftMenu.menuLayout)
 
         behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -36,5 +37,6 @@ class PlayingV2Activity : BaseMusicActivity() {
                 }
             }
         })
+
     }
 }
