@@ -4,26 +4,83 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- 布局A：主内容区域 -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- 布局A：主内容区域（使用DrawerLayout实现抽屉） -->
+    <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/layout_a"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="70dp"
         android:background="@color/translucent_black_p50">
 
-        <!-- 布局A的内容 -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="布局A"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- 1. 主内容区域（必须是第一个子视图，宽度match_parent） -->
+        <FrameLayout
+            android:id="@+id/contentFrame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent" />
+        <!-- 2. 左侧菜单（必须是第二个子视图，设置layout_gravity="start"） -->
+        <LinearLayout
+            android:id="@+id/menuLayout"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <!-- 菜单标题 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="center"
+                android:text="菜单"
+                android:textColor="@color/common_text_h1_color"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- 菜单分隔线 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/common_divider" />
+
+            <!-- 菜单项1 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="首页"
+                android:textColor="@color/common_text_h1_color"
+                android:textSize="16sp" />
+
+            <!-- 菜单项2 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="发现"
+                android:textColor="@color/common_text_h1_color"
+                android:textSize="16sp" />
+
+            <!-- 菜单项3 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="我的"
+                android:textColor="@color/common_text_h1_color"
+                android:textSize="16sp" />
+
+            <!-- 菜单项4 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="设置"
+                android:textColor="@color/common_text_h1_color"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+    </androidx.drawerlayout.widget.DrawerLayout>
 
     <!-- 布局B：底部可展开折叠区域 -->
     <androidx.constraintlayout.widget.ConstraintLayout
