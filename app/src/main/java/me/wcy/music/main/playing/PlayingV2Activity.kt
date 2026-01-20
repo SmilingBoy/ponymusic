@@ -1,7 +1,11 @@
 package me.wcy.music.main.playing
 
+import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import me.wcy.music.common.BaseMusicActivity
@@ -16,6 +20,34 @@ class PlayingV2Activity : BaseMusicActivity() {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
         val behavior = BottomSheetBehavior.from(viewBinding.layoutB)
+
+        // 设置DrawerLayout监听器，实现主内容跟随抽屉滑动
+        viewBinding.layoutA.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                // 获取抽屉宽度
+                val drawerWidth = drawerView.width
+                // 计算主内容平移距离：抽屉宽度 * 滑动偏移量
+                val translateDistance = drawerWidth * slideOffset
+                // 设置主内容平移
+                viewBinding.contentFrame.translationX = translateDistance
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+                // 抽屉打开时的处理
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                // 抽屉关闭时，重置主内容位置
+                viewBinding.contentFrame.translationX = 0f
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+                // 抽屉状态变化时的处理
+            }
+        })
+        viewBinding.layoutA.setScrimColor(Color.TRANSPARENT)
+        viewBinding.layoutA.setDrawerShadow(null, GravityCompat.START )
+        viewBinding.layoutA.setDrawerElevation(0f)
 
         // 默认展开左侧菜单
         viewBinding.layoutA.openDrawer(viewBinding.leftMenu.menuLayout)

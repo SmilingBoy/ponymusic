@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <!-- 布局A：主内容区域（使用DrawerLayout实现抽屉） -->
-    <androidx.drawerlayout.widget.DrawerLayout
+    <me.wcy.music.widget.CustomDrawerLayout
         android:id="@+id/layout_a"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,7 +17,14 @@
             android:id="@+id/contentFrame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/transparent" />
+            android:background="@color/white">
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="布局A - 主内容"-->
+<!--                android:textColor="@color/common_text_h1_color"-->
+<!--                android:textSize="20sp" />-->
+        </FrameLayout>
 
         <!-- 2. 左侧菜单（必须是第二个子视图，设置layout_gravity="start"） -->
         <include
@@ -27,7 +34,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="start" />
 
-    </androidx.drawerlayout.widget.DrawerLayout>
+    </me.wcy.music.widget.CustomDrawerLayout>
 
     <!-- 布局B：底部可展开折叠区域 -->
     <androidx.constraintlayout.widget.ConstraintLayout
