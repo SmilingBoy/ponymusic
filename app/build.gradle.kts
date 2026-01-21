@@ -146,4 +146,5 @@ dependencies {
     implementation(libs.zbar)
     implementation(libs.blurry)
     implementation(libs.banner)
+    implementation(libs.baserecyclerviewadapterhelper4)
 }

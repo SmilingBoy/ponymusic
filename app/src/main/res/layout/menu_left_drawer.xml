@@ -33,6 +33,7 @@
 
         <!-- 歌曲 -->
         <LinearLayout
+            android:id="@+id/songLayout"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -55,6 +56,7 @@
 
         <!-- 专辑 -->
         <LinearLayout
+            android:id="@+id/albumLayout"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -77,6 +79,7 @@
 
         <!-- 艺术家 -->
         <LinearLayout
+            android:id="@+id/artistLayout"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -121,6 +124,7 @@
 
         <!-- 歌单 -->
         <LinearLayout
+            android:id="@+id/playlistLayout"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"

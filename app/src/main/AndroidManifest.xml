@@ -68,7 +68,7 @@
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.Popup" />
 
-        <activity android:name=".main.playing.PlayingV2Activity" />
+        <activity android:name=".v2.PlayingV2Activity" />
     </application>
 
 </manifest>

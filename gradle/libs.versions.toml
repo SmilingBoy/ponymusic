@@ -59,3 +59,6 @@ loggingInterceptor = { group = "com.github.ihsanbal", name = "LoggingInterceptor
 zbar = { group = "cn.bertsir.zbarLibary", name = "zbarlibary", version = "1.4.2" }
 blurry = { group = "jp.wasabeef", name = "blurry", version = "4.0.1" }
 banner = { group = "io.github.youth5201314", name = "banner", version = "2.2.2" }
+
+baserecyclerviewadapterhelper4 = { group = "io.github.cymchad", name = "BaseRecyclerViewAdapterHelper4", version = "4.1.4" }
+

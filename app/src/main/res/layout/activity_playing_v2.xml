@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <!-- 布局A：主内容区域（使用DrawerLayout实现抽屉） -->
-    <me.wcy.music.widget.CustomDrawerLayout
+    <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/layout_a"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,7 +34,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="start" />
 
-    </me.wcy.music.widget.CustomDrawerLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
 
     <!-- 布局B：底部可展开折叠区域 -->
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -3,6 +3,8 @@ package me.wcy.music.main
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.MenuItem
 import androidx.annotation.DrawableRes
@@ -22,12 +24,12 @@ import me.wcy.music.consts.RoutePath
 import me.wcy.music.databinding.ActivityMainBinding
 import me.wcy.music.databinding.NavigationHeaderBinding
 import me.wcy.music.databinding.TabItemBinding
-import me.wcy.music.main.playing.PlayingV2Activity
 import me.wcy.music.service.MusicService
 import me.wcy.music.service.PlayServiceModule
 import me.wcy.music.service.PlayServiceModule.playerController
 import me.wcy.music.utils.QuitTimer
 import me.wcy.music.utils.TimeUtils
+import me.wcy.music.v2.PlayingV2Activity
 import me.wcy.router.CRouter
 import top.wangchenyan.common.ext.getColorEx
 import top.wangchenyan.common.ext.showConfirmDialog
@@ -46,10 +48,12 @@ import javax.inject.Inject
 class MainActivity : BaseMusicActivity() {
     // 视图绑定，用于访问布局文件中的所有视图
     private val viewBinding by viewBindings<ActivityMainBinding>()
+
     // 退出定时器，用于设置自动退出应用的时间
     private val quitTimer by lazy {
         QuitTimer(onTimerListener)
     }
+
     // 定时器菜单项，用于显示定时器状态
     private var timerItem: MenuItem? = null
 
@@ -96,7 +100,11 @@ class MainActivity : BaseMusicActivity() {
             navBarColor = getColorEx(R.color.tab_bg)
         }
 
-        startActivity(Intent(this, PlayingV2Activity::class.java))
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            startActivity(Intent(this, PlayingV2Activity::class.java))
+        }, 1000)
+
     }
 
     /**

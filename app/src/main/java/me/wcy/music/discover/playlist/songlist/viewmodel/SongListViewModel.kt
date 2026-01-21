@@ -7,7 +7,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import me.wcy.music.discover.DiscoverApi
 import me.wcy.music.discover.playlist.detail.bean.NmSongData
+import me.wcy.music.discover.playlist.songlist.OrderWayEnums
 import me.wcy.music.discover.playlist.songlist.SongListFragment
+import me.wcy.music.discover.playlist.songlist.SongOrderEnums
 import me.wcy.music.service.PlayerController
 import me.wcy.music.utils.toNmMediaItem
 import top.wangchenyan.common.model.CommonResult
@@ -32,10 +34,12 @@ class SongListViewModel @Inject constructor(
                 sort = "title"
                 order = "ASC"
             }
+
             SongListFragment.SHOW_TYPE_HISTORY -> {
                 sort = "play_date"
                 order = "DESC"
             }
+
             SongListFragment.SHOW_TYPE_MOST_PLAYED -> {
                 sort = "play_count"
                 order = "DESC"
@@ -48,6 +52,31 @@ class SongListViewModel @Inject constructor(
                     .getSongList(
                         sort = sort,
                         order = order,
+                        start = 30 * (page - 1),
+                        end = 30 * page,
+                    )
+            }
+            val songDataList = res.getOrThrow()
+
+            _songs.value = songDataList
+            CommonResult.success(songDataList)
+        } catch (e: Exception) {
+            CommonResult.fail(msg = e.message)
+        }
+    }
+
+    suspend fun loadSongs(
+        page: Int = 1,
+        songOrderEnums: SongOrderEnums,
+        songOrderWayEnums: OrderWayEnums
+    ): CommonResult<List<NmSongData>> {
+
+        return try {
+            val res = kotlin.runCatching {
+                DiscoverApi.get()
+                    .getSongList(
+                        sort = songOrderEnums.key,
+                        order = songOrderWayEnums.key,
                         start = 30 * (page - 1),
                         end = 30 * page,
                     )
