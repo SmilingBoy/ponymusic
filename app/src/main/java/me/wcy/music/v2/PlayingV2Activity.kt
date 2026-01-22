@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.FragmentUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,15 +23,31 @@ class PlayingV2Activity : BaseMusicActivity() {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
 
+
+        layoutHeaderInit()
+
         layoutAInit()
 
         layoutBBehavior()
 
         initEvent()
-        
+
         // 默认显示歌曲列表Fragment
+        viewBinding.tvTitle.text = "歌曲"
         val fragment = SongListFragment()
         FragmentUtils.replace(supportFragmentManager, fragment, R.id.contentFrame)
+    }
+
+    private fun layoutHeaderInit() {
+
+        BarUtils.addMarginTopEqualStatusBarHeight(viewBinding.flHeader)
+        viewBinding.ivMenu.setOnClickListener {
+            if (viewBinding.layoutA.isDrawerOpen(GravityCompat.START)) {
+                viewBinding.layoutA.closeDrawer(GravityCompat.START)
+            } else {
+                viewBinding.layoutA.openDrawer(GravityCompat.START)
+            }
+        }
     }
 
     /**
@@ -45,7 +62,7 @@ class PlayingV2Activity : BaseMusicActivity() {
                 // 计算主内容平移距离：抽屉宽度 * 滑动偏移量
                 val translateDistance = drawerWidth * slideOffset
                 // 设置主内容平移
-                viewBinding.contentFrame.translationX = translateDistance
+                viewBinding.container.translationX = translateDistance
             }
 
             override fun onDrawerOpened(drawerView: View) {
@@ -54,7 +71,7 @@ class PlayingV2Activity : BaseMusicActivity() {
 
             override fun onDrawerClosed(drawerView: View) {
                 // 抽屉关闭时，重置主内容位置
-                viewBinding.contentFrame.translationX = 0f
+                viewBinding.container.translationX = 0f
             }
 
             override fun onDrawerStateChanged(newState: Int) {
@@ -93,6 +110,7 @@ class PlayingV2Activity : BaseMusicActivity() {
     private fun initEvent() {
 
         viewBinding.leftMenu.songLayout.setOnClickListener {
+            viewBinding.tvTitle.text = "歌曲"
             val fragment = SongListFragment()
             FragmentUtils.replace(supportFragmentManager, fragment, R.id.contentFrame)
         }

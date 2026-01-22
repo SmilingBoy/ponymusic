@@ -13,18 +13,50 @@
         android:background="@color/translucent_black_p50">
 
         <!-- 1. 主内容区域（必须是第一个子视图，宽度match_parent） -->
-        <FrameLayout
-            android:id="@+id/contentFrame"
+        <LinearLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white">
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="布局A - 主内容"-->
-<!--                android:textColor="@color/common_text_h1_color"-->
-<!--                android:textSize="20sp" />-->
-        </FrameLayout>
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:paddingHorizontal="15dp">
+
+            <FrameLayout
+                android:id="@+id/fl_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/ivMenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_menu" />
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingVertical="20dp"
+                    android:text="标题"
+                    android:textColor="@color/black"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/contentFrame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white" />
+        </LinearLayout>
 
         <!-- 2. 左侧菜单（必须是第二个子视图，设置layout_gravity="start"） -->
         <include

@@ -43,7 +43,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginRight="15dp"
-                android:src="@drawable/ic_play_queue"
+                android:src="@drawable/ic_song"
                 app:tint="@color/green" />
 
             <TextView
@@ -66,8 +66,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginRight="15dp"
-                android:src="@drawable/ic_playlist"
-                app:tint="@color/red" />
+                android:src="@drawable/ic_album_24" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -89,8 +88,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginRight="15dp"
-                android:src="@drawable/ic_radio"
-                app:tint="@color/yellow" />
+                android:src="@drawable/ic_artist" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -134,7 +132,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginRight="15dp"
-                android:src="@drawable/ic_playlist"
+                android:src="@drawable/ic_playlist2"
                 app:tint="@color/blue" />
 
             <TextView

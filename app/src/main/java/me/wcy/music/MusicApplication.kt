@@ -3,6 +3,9 @@ package me.wcy.music
 import android.app.Application
 import android.content.ComponentName
 import android.content.Intent
+import android.content.res.Resources
+import android.graphics.Typeface
+import androidx.core.content.res.ResourcesCompat
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.blankj.utilcode.util.ActivityUtils
@@ -19,6 +22,7 @@ import me.wcy.router.CRouter
 import me.wcy.router.RouterClient
 import top.wangchenyan.common.CommonApp
 import top.wangchenyan.common.ext.findActivity
+import java.lang.reflect.Field
 import javax.inject.Inject
 
 /**
@@ -70,6 +74,33 @@ class MusicApplication : Application() {
             PlayServiceModule.setPlayer(player)
             WidgetRepository.init(this)
         }, MoreExecutors.directExecutor())
+
+        setGlobalFont()
+    }
+
+    private fun setGlobalFont() {
+        try {
+            // 兼容所有版本：从res/font目录加载字体（R.font.mr）
+            val customFont: Typeface? = ResourcesCompat.getFont(this, R.font.mr)
+            // 判空：避免字体加载失败导致后续反射出错
+            customFont ?: return
+
+            // 反射替换系统默认的MONOSPACE字体
+            val field: Field = Typeface::class.java.getDeclaredField("MONOSPACE")
+            field.isAccessible = true // 突破私有字段访问限制
+            field.set(null, customFont) // 为静态字段赋值
+        } catch (e: NoSuchFieldException) {
+            e.printStackTrace()
+        } catch (e: IllegalAccessException) {
+            e.printStackTrace()
+        } catch (e: Resources.NotFoundException) {
+            // 捕获字体资源不存在的异常（比如R.font.mr写错/文件缺失）
+            e.printStackTrace()
+            println("字体资源加载失败：请检查res/font目录下是否有mr.ttf/mr.otf文件")
+        } catch (e: Exception) {
+            // 兜底捕获所有异常，避免崩溃
+            e.printStackTrace()
+        }
     }
 
     private fun initCRouter() {
