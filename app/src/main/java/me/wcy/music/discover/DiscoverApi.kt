@@ -163,7 +163,7 @@ interface DiscoverApi {
         @Query("_end") end: Int = 30,
         @Query("_order") order: String = "ASC",
         @Query("_sort") sort: String = "name",
-        @Query("name") name: String = "name",
+        @Query("name") name: String = "",
     ): List<NmArtistData>
 
     //http://127.0.0.1:9003/api/album?_end=18&_order=DESC&_sort=play_date&_start=0&recently_played=true&seed=0.3406203128658801-12

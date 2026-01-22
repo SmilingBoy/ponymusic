@@ -12,6 +12,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import me.wcy.music.R
 import me.wcy.music.common.BaseMusicActivity
 import me.wcy.music.databinding.ActivityPlayingV2Binding
+import me.wcy.music.v2.album.AlbumListFragment
+import me.wcy.music.v2.artist.ArtistListFragment
 import me.wcy.music.v2.song.SongListFragment
 import top.wangchenyan.common.ext.viewBindings
 
@@ -110,8 +112,23 @@ class PlayingV2Activity : BaseMusicActivity() {
     private fun initEvent() {
 
         viewBinding.leftMenu.songLayout.setOnClickListener {
+            viewBinding.layoutA.closeDrawer(GravityCompat.START)
             viewBinding.tvTitle.text = "歌曲"
             val fragment = SongListFragment()
+            FragmentUtils.replace(supportFragmentManager, fragment, R.id.contentFrame)
+        }
+
+        viewBinding.leftMenu.albumLayout.setOnClickListener {
+            viewBinding.layoutA.closeDrawer(GravityCompat.START)
+            viewBinding.tvTitle.text = "专辑"
+            val fragment = AlbumListFragment()
+            FragmentUtils.replace(supportFragmentManager, fragment, R.id.contentFrame)
+        }
+
+        viewBinding.leftMenu.artistLayout.setOnClickListener {
+            viewBinding.layoutA.closeDrawer(GravityCompat.START)
+            viewBinding.tvTitle.text = "艺术家"
+            val fragment = ArtistListFragment()
             FragmentUtils.replace(supportFragmentManager, fragment, R.id.contentFrame)
         }
     }
