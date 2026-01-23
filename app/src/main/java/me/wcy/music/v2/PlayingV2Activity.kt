@@ -18,6 +18,7 @@ import me.wcy.music.common.DarkModeService
 import me.wcy.music.databinding.ActivityPlayingV2Binding
 import me.wcy.music.service.PlayServiceModule
 import me.wcy.music.service.PlayServiceModule.playerController
+import me.wcy.music.storage.preference.ConfigPreferences
 import me.wcy.music.v2.album.AlbumListFragment
 import me.wcy.music.v2.artist.ArtistListFragment
 import me.wcy.music.v2.song.SongListFragment
@@ -32,7 +33,7 @@ class PlayingV2Activity : BaseMusicActivity() {
     // 用户服务，用于处理用户相关操作（通过Hilt注入）
     @Inject
     lateinit var userService: UserService
-    
+
     @Inject
     lateinit var darkModeService: DarkModeService
 
@@ -45,6 +46,8 @@ class PlayingV2Activity : BaseMusicActivity() {
             if (isReady) {
                 setContentView(viewBinding.root)
 
+
+                layoutLeftMenuInit()
 
                 layoutHeaderInit()
 
@@ -63,10 +66,54 @@ class PlayingV2Activity : BaseMusicActivity() {
 
     }
 
+    private fun layoutLeftMenuInit() {
+
+        BarUtils.addMarginTopEqualStatusBarHeight(viewBinding.leftMenu.llTop)
+
+        val themeViews = listOf(
+            viewBinding.leftMenu.themeLight,
+            viewBinding.leftMenu.themeDark,
+            viewBinding.leftMenu.themeSystem
+        )
+        val darkMode = DarkModeService.DarkMode.fromValue(ConfigPreferences.darkMode)
+        themeViews.forEach { it.isSelected = false }
+        when (darkMode) {
+            DarkModeService.DarkMode.Light -> {
+                viewBinding.leftMenu.themeLight.isSelected = true
+            }
+
+            DarkModeService.DarkMode.Dark -> {
+                viewBinding.leftMenu.themeDark.isSelected = true
+            }
+
+            DarkModeService.DarkMode.Auto -> {
+                viewBinding.leftMenu.themeSystem.isSelected = true
+            }
+        }
+
+        // 主题切换
+        viewBinding.leftMenu.themeSystem.setOnClickListener {
+            darkModeService.setDarkMode(DarkModeService.DarkMode.Auto)
+            themeViews.forEach { t -> t.isSelected = false }
+            it.isSelected = true
+        }
+
+        viewBinding.leftMenu.themeLight.setOnClickListener {
+            darkModeService.setDarkMode(DarkModeService.DarkMode.Light)
+            themeViews.forEach { t -> t.isSelected = false }
+            it.isSelected = true
+        }
+
+        viewBinding.leftMenu.themeDark.setOnClickListener {
+            darkModeService.setDarkMode(DarkModeService.DarkMode.Dark)
+            themeViews.forEach { t -> t.isSelected = false }
+            it.isSelected = true
+        }
+    }
+
     private fun layoutHeaderInit() {
 
         BarUtils.addMarginTopEqualStatusBarHeight(viewBinding.flHeader)
-        BarUtils.addMarginTopEqualStatusBarHeight(viewBinding.leftMenu.llTop)
         viewBinding.ivMenu.setOnClickListener {
             if (viewBinding.layoutA.isDrawerOpen(GravityCompat.START)) {
                 viewBinding.layoutA.closeDrawer(GravityCompat.START)
@@ -154,22 +201,6 @@ class PlayingV2Activity : BaseMusicActivity() {
             viewBinding.tvTitle.text = "艺术家"
             val fragment = ArtistListFragment()
             FragmentUtils.replace(supportFragmentManager, fragment, R.id.contentFrame)
-        }
-
-        // 主题切换
-        viewBinding.leftMenu.themeSystem.setOnClickListener {
-            viewBinding.layoutA.closeDrawer(GravityCompat.START)
-            darkModeService.setDarkMode(DarkModeService.DarkMode.Auto)
-        }
-
-        viewBinding.leftMenu.themeLight.setOnClickListener {
-            viewBinding.layoutA.closeDrawer(GravityCompat.START)
-            darkModeService.setDarkMode(DarkModeService.DarkMode.Light)
-        }
-
-        viewBinding.leftMenu.themeDark.setOnClickListener {
-            viewBinding.layoutA.closeDrawer(GravityCompat.START)
-            darkModeService.setDarkMode(DarkModeService.DarkMode.Dark)
         }
     }
 
