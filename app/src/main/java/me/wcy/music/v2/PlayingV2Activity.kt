@@ -1,13 +1,19 @@
 package me.wcy.music.v2
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.FragmentUtils
+import com.blankj.utilcode.util.LogUtils
+import com.blankj.utilcode.util.SizeUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -108,6 +114,77 @@ class PlayingV2Activity : BaseMusicActivity() {
             darkModeService.setDarkMode(DarkModeService.DarkMode.Dark)
             themeViews.forEach { t -> t.isSelected = false }
             it.isSelected = true
+        }
+
+        // 主题模式布局显示/隐藏切换
+        viewBinding.leftMenu.changeThemeMode.setOnClickListener {
+            toggleThemeModeLayout()
+        }
+
+        // 退出应用
+        viewBinding.leftMenu.exitApp.setOnClickListener {
+            exitApp()
+        }
+
+
+        viewBinding.leftMenu.themeModeLayout.post {
+            LogUtils.d("themeModeLayout height: ${viewBinding.leftMenu.themeModeLayout.height}")
+        }
+    }
+
+    /**
+     * 切换主题模式布局的显示/隐藏状态，并添加动画效果
+     */
+    private fun toggleThemeModeLayout() {
+        val themeModeLayout = viewBinding.leftMenu.themeModeLayout
+        if (themeModeLayout.isVisible) {
+            // 隐藏时：向上收起动画（通过改变高度实现）
+            val heightAnimator = ValueAnimator.ofInt(themeModeLayout.height, 0)
+            heightAnimator.duration = 300
+            heightAnimator.addUpdateListener { animation ->
+                val height = animation.animatedValue as Int
+                val layoutParams = themeModeLayout.layoutParams
+                layoutParams.height = height
+                themeModeLayout.layoutParams = layoutParams
+            }
+            heightAnimator.addListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {}
+                override fun onAnimationEnd(animation: Animator) {
+                    themeModeLayout.visibility = View.GONE
+                }
+
+                override fun onAnimationCancel(animation: Animator) {}
+                override fun onAnimationRepeat(animation: Animator) {}
+            })
+            heightAnimator.start()
+        } else {
+            // 显示时：向下展开动画（通过改变高度实现）
+            // 先测量真实高度
+            themeModeLayout.visibility = View.VISIBLE
+            themeModeLayout.measure(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+//            val targetHeight = themeModeLayout.measuredHeight
+            // 48 * 3F + 4 * 3F = 144dp 507 546
+            val targetHeight = SizeUtils.dp2px(48 * 3F + 4 * 3F + 16F)
+            LogUtils.d("真实高度：$targetHeight")
+
+            // 初始高度设为0
+            val layoutParams = themeModeLayout.layoutParams
+            layoutParams.height = 0
+            themeModeLayout.layoutParams = layoutParams
+
+            // 执行高度动画
+            val heightAnimator = ValueAnimator.ofInt(0, targetHeight)
+            heightAnimator.duration = 300
+            heightAnimator.addUpdateListener { animation ->
+                val height = animation.animatedValue as Int
+                val params = themeModeLayout.layoutParams
+                params.height = height
+                themeModeLayout.layoutParams = params
+            }
+            heightAnimator.start()
         }
     }
 
