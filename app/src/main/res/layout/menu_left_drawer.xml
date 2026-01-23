@@ -5,19 +5,138 @@
     android:layout_width="160dp"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="#F6F8F8"
+    android:background="@color/drawer_background"
     android:orientation="vertical">
 
 
     <com.hjq.shape.layout.ShapeLinearLayout
+        android:id="@+id/ll_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="10dp"
+        android:layout_marginVertical="15dp"
         android:layout_marginTop="60dp"
         android:orientation="vertical"
+        app:shape_radius="10dp"
         app:shape_solidColor="@color/card_bg">
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="15dp">
+
+            <ImageView
+                android:id="@+id/exitApp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_exit_app"
+                app:tint="#FF5951" />
+
+            <ImageView
+                android:id="@+id/changeThemeMode"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_light"
+                app:tint="#FFC551" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/themeModeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="10dp">
+
+            <!-- 跟随系统 -->
+            <com.hjq.shape.layout.ShapeLinearLayout
+                android:id="@+id/themeSystem"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginVertical="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                app:shape_radius="10dp"
+                app:shape_strokeColor="#AEB2B6"
+                app:shape_strokeSelectedColor="#3482FF"
+                app:shape_strokeSize="1dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="12dp"
+                    android:src="@drawable/ic_android"
+                    app:tint="@color/color_left_menu_theme" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="跟随系统"
+                    android:textColor="@color/color_left_menu_theme"
+                    android:textSize="14sp" />
+            </com.hjq.shape.layout.ShapeLinearLayout>
+
+            <!-- 浅色 -->
+            <com.hjq.shape.layout.ShapeLinearLayout
+                android:id="@+id/themeLight"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginVertical="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                app:shape_radius="10dp"
+                app:shape_strokeColor="#AEB2B6"
+                app:shape_strokeSelectedColor="#3482FF"
+                app:shape_strokeSize="1dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="12dp"
+                    android:src="@drawable/ic_light"
+                    app:tint="@color/color_left_menu_theme" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="浅色"
+                    android:textColor="@color/color_left_menu_theme"
+                    android:textSize="14sp" />
+            </com.hjq.shape.layout.ShapeLinearLayout>
+
+            <!-- 深色 -->
+            <com.hjq.shape.layout.ShapeLinearLayout
+                android:id="@+id/themeDark"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginVertical="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                app:shape_radius="10dp"
+                app:shape_strokeColor="#AEB2B6"
+                app:shape_strokeSelectedColor="#3482FF"
+                app:shape_strokeSize="1dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="12dp"
+                    android:src="@drawable/ic_dark"
+                    app:tint="@color/color_left_menu_theme" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="深色"
+                    android:textColor="@color/color_left_menu_theme"
+                    android:textSize="14sp" />
+            </com.hjq.shape.layout.ShapeLinearLayout>
+        </LinearLayout>
 
     </com.hjq.shape.layout.ShapeLinearLayout>
 
@@ -26,7 +145,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="10dp"
+        android:layout_marginVertical="15dp"
         android:orientation="vertical"
         app:shape_radius="10dp"
         app:shape_solidColor="@color/card_bg">
@@ -148,7 +267,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="10dp"
+        android:layout_marginVertical="15dp"
         android:orientation="vertical"
         app:shape_radius="8dp"
         app:shape_solidColor="@color/card_bg">

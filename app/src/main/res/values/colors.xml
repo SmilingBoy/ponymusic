@@ -32,6 +32,7 @@
     <color name="tab_bg">@color/white</color>
     <color name="card_bg">@color/white</color>
     <color name="play_bar_bg">@color/white</color>
+    <color name="drawer_background">#F7F9FA</color>
 
     <!-- 分割线-->
 

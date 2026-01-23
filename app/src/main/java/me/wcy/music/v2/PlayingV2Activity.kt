@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import me.wcy.music.R
 import me.wcy.music.account.service.UserService
 import me.wcy.music.common.BaseMusicActivity
+import me.wcy.music.common.DarkModeService
 import me.wcy.music.databinding.ActivityPlayingV2Binding
 import me.wcy.music.service.PlayServiceModule
 import me.wcy.music.service.PlayServiceModule.playerController
@@ -31,6 +32,9 @@ class PlayingV2Activity : BaseMusicActivity() {
     // 用户服务，用于处理用户相关操作（通过Hilt注入）
     @Inject
     lateinit var userService: UserService
+    
+    @Inject
+    lateinit var darkModeService: DarkModeService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +66,7 @@ class PlayingV2Activity : BaseMusicActivity() {
     private fun layoutHeaderInit() {
 
         BarUtils.addMarginTopEqualStatusBarHeight(viewBinding.flHeader)
+        BarUtils.addMarginTopEqualStatusBarHeight(viewBinding.leftMenu.llTop)
         viewBinding.ivMenu.setOnClickListener {
             if (viewBinding.layoutA.isDrawerOpen(GravityCompat.START)) {
                 viewBinding.layoutA.closeDrawer(GravityCompat.START)
@@ -149,6 +154,22 @@ class PlayingV2Activity : BaseMusicActivity() {
             viewBinding.tvTitle.text = "艺术家"
             val fragment = ArtistListFragment()
             FragmentUtils.replace(supportFragmentManager, fragment, R.id.contentFrame)
+        }
+
+        // 主题切换
+        viewBinding.leftMenu.themeSystem.setOnClickListener {
+            viewBinding.layoutA.closeDrawer(GravityCompat.START)
+            darkModeService.setDarkMode(DarkModeService.DarkMode.Auto)
+        }
+
+        viewBinding.leftMenu.themeLight.setOnClickListener {
+            viewBinding.layoutA.closeDrawer(GravityCompat.START)
+            darkModeService.setDarkMode(DarkModeService.DarkMode.Light)
+        }
+
+        viewBinding.leftMenu.themeDark.setOnClickListener {
+            viewBinding.layoutA.closeDrawer(GravityCompat.START)
+            darkModeService.setDarkMode(DarkModeService.DarkMode.Dark)
         }
     }
 
