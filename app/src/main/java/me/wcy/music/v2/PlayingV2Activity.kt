@@ -5,39 +5,58 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.FragmentUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import me.wcy.music.R
+import me.wcy.music.account.service.UserService
 import me.wcy.music.common.BaseMusicActivity
 import me.wcy.music.databinding.ActivityPlayingV2Binding
+import me.wcy.music.service.PlayServiceModule
+import me.wcy.music.service.PlayServiceModule.playerController
 import me.wcy.music.v2.album.AlbumListFragment
 import me.wcy.music.v2.artist.ArtistListFragment
 import me.wcy.music.v2.song.SongListFragment
+import top.wangchenyan.common.ext.showConfirmDialog
 import top.wangchenyan.common.ext.viewBindings
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PlayingV2Activity : BaseMusicActivity() {
     private val viewBinding by viewBindings<ActivityPlayingV2Binding>()
 
+    // 用户服务，用于处理用户相关操作（通过Hilt注入）
+    @Inject
+    lateinit var userService: UserService
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(viewBinding.root)
 
 
-        layoutHeaderInit()
+        // 观察播放器准备状态，当播放器准备就绪后才初始化界面
+        PlayServiceModule.isPlayerReady.observe(this) { isReady ->
+            if (isReady) {
+                setContentView(viewBinding.root)
 
-        layoutAInit()
 
-        layoutBBehavior()
+                layoutHeaderInit()
 
-        initEvent()
+                layoutAInit()
 
-        // 默认显示歌曲列表Fragment
-        viewBinding.tvTitle.text = "歌曲"
-        val fragment = SongListFragment()
-        FragmentUtils.replace(supportFragmentManager, fragment, R.id.contentFrame)
+                layoutBBehavior()
+
+                initEvent()
+
+                // 默认显示歌曲列表Fragment
+                viewBinding.tvTitle.text = "歌曲"
+                val fragment = SongListFragment()
+                FragmentUtils.replace(supportFragmentManager, fragment, R.id.contentFrame)
+            }
+        }
+
     }
 
     private fun layoutHeaderInit() {
@@ -131,5 +150,30 @@ class PlayingV2Activity : BaseMusicActivity() {
             val fragment = ArtistListFragment()
             FragmentUtils.replace(supportFragmentManager, fragment, R.id.contentFrame)
         }
+    }
+
+
+    /**
+     * 退出登录
+     * 显示确认对话框，用户确认后调用用户服务执行退出登录操作
+     */
+    private fun logout() {
+        showConfirmDialog(message = "确认退出登录？") {
+            lifecycleScope.launch {
+                // 调用用户服务执行退出登录
+                userService.logout()
+            }
+        }
+    }
+
+    /**
+     * 退出应用
+     * 停止播放器并结束当前Activity
+     */
+    private fun exitApp() {
+        // 停止音乐播放
+        application.playerController().stop()
+        // 结束当前Activity
+        finish()
     }
 }
