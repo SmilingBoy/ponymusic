@@ -137,8 +137,16 @@ class PlayingV2Activity : BaseMusicActivity() {
      */
     private fun toggleThemeModeLayout() {
         val themeModeLayout = viewBinding.leftMenu.themeModeLayout
+        val changeThemeModeIcon = viewBinding.leftMenu.changeThemeMode
+        
         if (themeModeLayout.isVisible) {
             // 隐藏时：向上收起动画（通过改变高度实现）
+            // 同时：顺时针旋转一周
+            changeThemeModeIcon.animate()
+                .rotation(360f)
+                .setDuration(300)
+                .start()
+            
             val heightAnimator = ValueAnimator.ofInt(themeModeLayout.height, 0)
             heightAnimator.duration = 300
             heightAnimator.addUpdateListener { animation ->
@@ -151,6 +159,7 @@ class PlayingV2Activity : BaseMusicActivity() {
                 override fun onAnimationStart(animation: Animator) {}
                 override fun onAnimationEnd(animation: Animator) {
                     themeModeLayout.visibility = View.GONE
+                    changeThemeModeIcon.rotation = 0f // 重置旋转角度
                 }
 
                 override fun onAnimationCancel(animation: Animator) {}
@@ -159,6 +168,12 @@ class PlayingV2Activity : BaseMusicActivity() {
             heightAnimator.start()
         } else {
             // 显示时：向下展开动画（通过改变高度实现）
+            // 同时：逆时针旋转一周
+            changeThemeModeIcon.animate()
+                .rotation(-360f)
+                .setDuration(300)
+                .start()
+            
             // 先测量真实高度
             themeModeLayout.visibility = View.VISIBLE
             themeModeLayout.measure(
@@ -184,6 +199,14 @@ class PlayingV2Activity : BaseMusicActivity() {
                 params.height = height
                 themeModeLayout.layoutParams = params
             }
+            heightAnimator.addListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {}
+                override fun onAnimationEnd(animation: Animator) {
+                    changeThemeModeIcon.rotation = 0f // 重置旋转角度
+                }
+                override fun onAnimationCancel(animation: Animator) {}
+                override fun onAnimationRepeat(animation: Animator) {}
+            })
             heightAnimator.start()
         }
     }
