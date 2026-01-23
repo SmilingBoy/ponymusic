@@ -60,6 +60,10 @@ class SongListFragment : BaseMusicFragment() {
             }
 
         })
+
+        songAdapter.setOnItemClickListener { adapter, view, position ->
+            viewModel.playSong(adapter.items[position])
+        }
     }
 
     private fun loadData() {

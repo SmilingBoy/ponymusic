@@ -268,13 +268,13 @@ class PlayingV2Activity : BaseMusicActivity() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 val alpha = 1 - slideOffset
-                viewBinding.llMusicBar.alpha = alpha
+                viewBinding.musicBar.alpha = alpha
 
                 // 当完全透明时，设置为Invisible
                 if (alpha <= 0f) {
-                    viewBinding.llMusicBar.visibility = View.INVISIBLE
+                    viewBinding.musicBar.visibility = View.INVISIBLE
                 } else {
-                    viewBinding.llMusicBar.visibility = View.VISIBLE
+                    viewBinding.musicBar.visibility = View.VISIBLE
                 }
             }
         })
