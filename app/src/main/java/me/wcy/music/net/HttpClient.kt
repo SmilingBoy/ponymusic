@@ -3,11 +3,11 @@ package me.wcy.music.net
 import android.util.Log
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor
-import top.wangchenyan.common.CommonApp
-import top.wangchenyan.common.utils.ServerTime
 import me.wcy.music.consts.FilePath
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import top.wangchenyan.common.CommonApp
+import top.wangchenyan.common.utils.ServerTime
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -26,6 +26,7 @@ object HttpClient {
             .cache(Cache(File(FilePath.httpCache), 10 * 1024 * 1024))
             .addInterceptor(HeaderInterceptor())
             .addInterceptor(ServerTime)
+            .addInterceptor(TokenExpiredInterceptor())
         if (CommonApp.test) {
             builder.addInterceptor(
                 LoggingInterceptor.Builder()
