@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tlBackgroundColor="@color/common_theme_color"
-        app:tlTextStyle="white" />
+        app:tlTitleText="设置" />
 
     <FrameLayout
         android:id="@+id/fragment_container"

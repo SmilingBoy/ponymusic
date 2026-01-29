@@ -76,6 +76,10 @@
             </intent-filter>
 
         </activity>
+
+        <activity android:name=".v2.settings.SettingActivity" />
+        <activity android:name=".v2.settings.AddMusicServiceActivity" />
+        <activity android:name=".v2.settings.MusicServiceActivity" />
     </application>
 
 </manifest>

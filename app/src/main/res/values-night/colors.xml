@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <color name="common_theme_color" tools:override="true">@color/red_700</color>
+    <color name="common_theme_color" tools:override="true">#0C0C0C</color>
     <color name="common_background_color" tools:override="true">#303030</color>
     <color name="common_dialog_background_color" tools:override="true">@color/black</color>
     <color name="common_text_h1_color" tools:override="true">@color/white</color>

@@ -22,4 +22,9 @@ object DatabaseModule {
             "music_db"
         ).build()
     }
+
+    @Provides
+    fun provideMusicServiceDao(database: MusicDatabase): me.wcy.music.storage.db.dao.MusicServiceDao {
+        return database.musicServiceDao()
+    }
 }

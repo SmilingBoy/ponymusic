@@ -10,6 +10,7 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
+import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.FragmentUtils
 import com.blankj.utilcode.util.LogUtils
@@ -27,6 +28,7 @@ import me.wcy.music.service.PlayServiceModule.playerController
 import me.wcy.music.storage.preference.ConfigPreferences
 import me.wcy.music.v2.album.AlbumListFragment
 import me.wcy.music.v2.artist.ArtistListFragment
+import me.wcy.music.v2.settings.SettingActivity
 import me.wcy.music.v2.song.SongListFragment
 import top.wangchenyan.common.ext.showConfirmDialog
 import top.wangchenyan.common.ext.viewBindings
@@ -138,7 +140,7 @@ class PlayingV2Activity : BaseMusicActivity() {
     private fun toggleThemeModeLayout() {
         val themeModeLayout = viewBinding.leftMenu.themeModeLayout
         val changeThemeModeIcon = viewBinding.leftMenu.changeThemeMode
-        
+
         if (themeModeLayout.isVisible) {
             // 隐藏时：向上收起动画（通过改变高度实现）
             // 同时：顺时针旋转一周
@@ -146,7 +148,7 @@ class PlayingV2Activity : BaseMusicActivity() {
                 .rotation(360f)
                 .setDuration(300)
                 .start()
-            
+
             val heightAnimator = ValueAnimator.ofInt(themeModeLayout.height, 0)
             heightAnimator.duration = 300
             heightAnimator.addUpdateListener { animation ->
@@ -173,7 +175,7 @@ class PlayingV2Activity : BaseMusicActivity() {
                 .rotation(-360f)
                 .setDuration(300)
                 .start()
-            
+
             // 先测量真实高度
             themeModeLayout.visibility = View.VISIBLE
             themeModeLayout.measure(
@@ -183,7 +185,7 @@ class PlayingV2Activity : BaseMusicActivity() {
 //            val targetHeight = themeModeLayout.measuredHeight
             // 48 * 3F + 4 * 3F = 144dp 507 546
             val targetHeight = SizeUtils.dp2px(48 * 3F + 4 * 3F + 16F)
-            LogUtils.d("真实高度：$targetHeight")
+//            LogUtils.d("真实高度：$targetHeight")
 
             // 初始高度设为0
             val layoutParams = themeModeLayout.layoutParams
@@ -204,6 +206,7 @@ class PlayingV2Activity : BaseMusicActivity() {
                 override fun onAnimationEnd(animation: Animator) {
                     changeThemeModeIcon.rotation = 0f // 重置旋转角度
                 }
+
                 override fun onAnimationCancel(animation: Animator) {}
                 override fun onAnimationRepeat(animation: Animator) {}
             })
@@ -301,6 +304,11 @@ class PlayingV2Activity : BaseMusicActivity() {
             viewBinding.tvTitle.text = "艺术家"
             val fragment = ArtistListFragment()
             FragmentUtils.replace(supportFragmentManager, fragment, R.id.contentFrame)
+        }
+
+        viewBinding.leftMenu.setUp.setOnClickListener {
+            viewBinding.layoutA.closeDrawer(GravityCompat.START)
+            ActivityUtils.startActivity(SettingActivity::class.java)
         }
     }
 

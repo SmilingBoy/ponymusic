@@ -48,10 +48,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
+            android:animateLayoutChanges="true"
             android:orientation="vertical"
             android:paddingHorizontal="10dp"
-            android:visibility="gone"
-            android:animateLayoutChanges="true">
+            android:visibility="gone">
 
             <!-- 跟随系统 -->
             <com.hjq.shape.layout.ShapeLinearLayout
@@ -343,6 +343,7 @@
 
         <!-- 设置 -->
         <LinearLayout
+            android:id="@+id/setUp"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
